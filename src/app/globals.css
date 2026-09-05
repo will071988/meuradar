@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-[#EAF2F8]/50 text-slate-800 antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid #00c2d7;
+  outline-offset: 2px;
+}

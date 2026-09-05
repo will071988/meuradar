@@ -1,6 +1,92 @@
 # MeuRadar
 
-### A informação que importa para você, em só um lugar.
+**A informação que importa para você, em só um lugar.**
+
+O **MeuRadar** é uma central inteligente de informações úteis do dia a dia: clima, notícias, mercado, preços, vagas, esportes, encomendas, agenda e um feed personalizado ("Seu Radar de Hoje").
+
+Sprint 1 — fundação técnica e visual: dashboard navegável, responsivo, com dados mockados, pronto para deploy.
+
+## Stack
+
+- Next.js 14 (App Router)
+- React 18 + TypeScript
+- Tailwind CSS 3
+- Lucide React (ícones)
+
+## Como executar
+
+```bash
+npm install
+npm run dev
+```
+
+Acesse `http://localhost:3000`.
+
+Scripts:
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+```
+
+## Estrutura do projeto
+
+```txt
+src/
+  app/
+    page.tsx              # Dashboard principal (/)
+    meu-radar/page.tsx
+    clima/page.tsx
+    noticias/page.tsx
+    mercado/page.tsx
+    precos/page.tsx
+    vagas/page.tsx
+    esportes/page.tsx
+    ferramentas/page.tsx
+    configuracoes/page.tsx
+    layout.tsx
+    globals.css
+  components/
+    layout/               # Sidebar, Header, MobileNav, AppShell, Logo, ModulePage
+    dashboard/            # WeatherCard, MarketCard, NewsCard, PackageCard, ...
+    ui/                   # Card, Badge, Button, SectionHeader
+  data/
+    mock.ts               # Dados mockados centralizados
+  types/
+    index.ts
+  lib/
+    utils.ts
+public/
+  favicon.svg
+  branding/logo.svg
+```
+
+## Módulos atuais (Sprint 1)
+
+- Painel Hoje (`/`) — saudação, Seu Radar de Hoje, clima, mercado, encomendas, preços, vagas, notícias, esportes, calendário
+- Meu Radar (`/meu-radar`)
+- Clima (`/clima`)
+- Notícias (`/noticias`)
+- Mercado (`/mercado`)
+- Preços (`/precos`)
+- Vagas (`/vagas`)
+- Esportes (`/esportes`)
+- Ferramentas (`/ferramentas`)
+- Configurações (`/configuracoes`)
+
+Páginas internas exibem layout consistente + card "Módulo em preparação". Nenhuma API real nesta sprint — tudo mockado em `src/data/mock.ts`.
+
+## Roadmap resumido
+
+- Sprint 2 — Autenticação, perfil e personalização (Supabase)
+- Sprint 3 — Integrações reais (clima, notícias, mercado)
+- Sprint 4 — Radares personalizados + alertas
+- Futuro — MeuRadar Pro, PWA completa, IA e monetização
+
+---
+
+## Visão do produto
 
 O **MeuRadar** é uma plataforma web inteligente criada para centralizar informações úteis do dia a dia em um único painel personalizado.
 
@@ -78,22 +164,6 @@ Entre elas:
 * Alertas premium
 * Recursos avançados de inteligência artificial
 
-A plataforma poderá utilizar links de afiliados em produtos, viagens, serviços e ofertas monitoradas pelos usuários.
-
-## MeuRadar Pro
-
-Uma futura modalidade premium poderá oferecer:
-
-* Experiência sem anúncios
-* Maior quantidade de radares
-* Monitoramento mais frequente
-* Histórico avançado
-* Alertas em tempo real
-* Integração com WhatsApp e e-mail
-* Ferramentas de IA
-* Painéis personalizados
-* Recursos exclusivos
-
 ## Arquitetura planejada
 
 ### Frontend
@@ -115,62 +185,11 @@ Uma futura modalidade premium poderá oferecer:
 
 * Vercel
 * Cloudflare
-* Workers
-* Webhooks
-* Cron Jobs
-* Filas de processamento
-
-### Inteligência Artificial
-
-* Classificação de conteúdo
-* Resumo de notícias
-* Personalização de feed
-* Sistema de recomendação
-* Identificação de interesses
-* Priorização de alertas
-
-## Estrutura inicial
-
-O MVP deverá começar com os seguintes módulos:
-
-1. Painel Hoje
-2. Meu Radar
-3. Clima
-4. Notícias
-5. Mercado
-6. Radar de preços
-7. Vagas e concursos
-8. Esportes
-9. Rastreamento de encomendas
-10. Feed personalizado
-11. Conta e preferências do usuário
-
-## Visão futura
-
-O objetivo de longo prazo é transformar o MeuRadar em uma plataforma global de informação e utilidade diária.
-
-A expansão poderá ocorrer inicialmente para:
-
-* Brasil
-* Portugal
-* América Latina
-* Estados Unidos
-* Europa
-
-Com suporte progressivo para:
-
-* Português do Brasil
-* Português de Portugal
-* Inglês
-* Espanhol
-
-Além de moedas, conteúdos e serviços adaptados para cada região.
+* Workers / Webhooks / Cron Jobs
 
 ## Diferencial
 
-Enquanto mecanismos de busca ajudam o usuário a encontrar informações quando ele procura por algo, o MeuRadar pretende acompanhar continuamente aquilo que o usuário considera importante.
-
-A plataforma deverá responder diariamente à pergunta:
+Enquanto mecanismos de busca ajudam o usuário a encontrar informações quando ele procura por algo, o MeuRadar acompanha continuamente aquilo que o usuário considera importante.
 
 **"O que eu realmente preciso saber hoje?"**
 
@@ -179,5 +198,3 @@ A plataforma deverá responder diariamente à pergunta:
 ### MeuRadar
 
 **A informação que importa para você, em só um lugar.**
-
-Uma plataforma criada para transformar informação dispersa em uma experiência personalizada, útil e diária.
