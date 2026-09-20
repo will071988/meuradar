@@ -8,6 +8,8 @@ Sprint 1 — fundação técnica e visual: dashboard navegável, responsivo, com
 
 Sprint 2 — autenticação, perfil e personalização: Supabase Auth (com fallback demo local), páginas `/login`, `/cadastro`, `/conta`, preferências persistentes e `supabase/schema.sql`.
 
+Sprint 3 — integrações reais: `/api/clima` (Open-Meteo, sem chave), `/api/mercado` (AwesomeAPI, sem chave), `/api/noticias` (NewsAPI opcional) — todas com cache em memória + fallback para `src/data/mock.ts`. Páginas `/clima`, `/mercado`, `/noticias` com badge Ao vivo/Demo, refresh e updatedAt.
+
 ## Stack
 
 - Next.js 14 (App Router)
@@ -64,6 +66,9 @@ src/
     utils.ts
     supabase.ts           # client browser + isSupabaseConfigured (Sprint 2)
     preferences.ts        # interesses, defaults, localStorage (Sprint 2)
+    cache.ts              # cache em memória + fetchWithTimeout (Sprint 3)
+    format.ts             # BRL, %, timeAgo (Sprint 3)
+    useApi.ts             # hook client p/ API routes (Sprint 3)
 supabase/
   schema.sql              # profiles + preferences + RLS + trigger (Sprint 2)
 public/
@@ -71,32 +76,30 @@ public/
   branding/logo.svg
 ```
 
-## Módulos atuais (Sprint 1 + 2)
+## Módulos atuais (Sprint 1 + 2 + 3)
 
-- Painel Hoje (`/`) — saudação, Seu Radar de Hoje, clima, mercado, encomendas, preços, vagas, notícias, esportes, calendário
+- Painel Hoje (`/`) — saudação, Seu Radar de Hoje, clima, mercado, encomendas, preços, vagas, notícias, esportes, calendário (mock Sprint 1)
 - Meu Radar (`/meu-radar`) — personalizado por interesses/cidade/time (Sprint 2)
 - Conta (`/conta`) — perfil + preferências + logout (Sprint 2)
 - Login (`/login`) / Cadastro (`/cadastro`) — Supabase ou demo local (Sprint 2)
-
-- Painel Hoje (`/`) — saudação, Seu Radar de Hoje, clima, mercado, encomendas, preços, vagas, notícias, esportes, calendário
-- Meu Radar (`/meu-radar`)
-- Clima (`/clima`)
-- Notícias (`/noticias`)
-- Mercado (`/mercado`)
-- Preços (`/precos`)
-- Vagas (`/vagas`)
-- Esportes (`/esportes`)
-- Ferramentas (`/ferramentas`)
-- Configurações (`/configuracoes`)
-
-Páginas internas exibem layout consistente + card "Módulo em preparação". Nenhuma API real nesta sprint — tudo mockado em `src/data/mock.ts`.
+- Clima (`/clima`) — ao vivo Open-Meteo + fallback demo (Sprint 3)
+- Mercado (`/mercado`) — ao vivo AwesomeAPI + fallback demo (Sprint 3)
+- Notícias (`/noticias`) — NewsAPI quando há chave + fallback demo (Sprint 3)
+- Preços (`/precos`), Vagas (`/vagas`), Esportes (`/esportes`), Ferramentas (`/ferramentas`) — ainda mock/em preparação
 
 ## Roadmap resumido
 
 - Sprint 2 — Autenticação, perfil e personalização (Supabase) ✅ CONCLUÍDA
-- Sprint 3 — Integrações reais (clima, notícias, mercado)
+- Sprint 3 — Integrações reais (clima, notícias, mercado) ✅ CONCLUÍDA
 - Sprint 4 — Radares personalizados + alertas
 - Futuro — MeuRadar Pro, PWA completa, IA e monetização
+
+## APIs (Sprint 3)
+
+- Clima: sem chave. `GET /api/clima?city=Rio%20de%20Janeiro` → Open-Meteo (geocoding + forecast), cache 10 min, fallback `weatherMock`.
+- Mercado: sem chave. `GET /api/mercado` → AwesomeAPI USD/EUR/BTC-BRL, cache 5 min, Ibovespa segue demo, fallback `marketMock`.
+- Notícias: opcional. Sem `NEWS_API_KEY`, `GET /api/noticias` retorna `newsMock` (demo). Com chave da NewsAPI, retorna manchetes BR, cache 15 min.
+- Badge “Ao vivo/Demo” + botão Atualizar + timestamp em cada página.
 
 ## Supabase (Sprint 2)
 

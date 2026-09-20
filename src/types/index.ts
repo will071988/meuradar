@@ -97,3 +97,11 @@ export interface InterestOption {
   id: string;
   label: string;
 }
+
+export type DataSource = "live" | "demo";
+
+export interface ApiResponse<T> {
+  source: DataSource;
+  updatedAt: string;
+  data: T;
+}
