@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppShell } from "@/components/layout/AppShell";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 
 export const metadata: Metadata = {
   title: "MeuRadar — A informação que importa para você",
@@ -21,7 +22,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="pt-BR">
       <body>
-        <AppShell>{children}</AppShell>
+        <AuthProvider>
+          <AppShell>{children}</AppShell>
+        </AuthProvider>
       </body>
     </html>
   );

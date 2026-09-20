@@ -11,7 +11,7 @@ const mobileLinks = [
   { href: "/meu-radar", label: "Meu Radar", icon: Radar },
   { href: "/clima", label: "Clima", icon: Search },
   { href: "/vagas", label: "Vagas", icon: Heart },
-  { href: "/configuracoes", label: "Mais", icon: LayoutGrid },
+  { href: "/conta", label: "Conta", icon: LayoutGrid },
 ];
 
 export function MobileNav({
@@ -81,7 +81,7 @@ export function MobileNav({
             { href: "/meu-radar", label: "Meu Radar", icon: Radar },
             { href: "/noticias", label: "Buscar", icon: Search },
             { href: "/precos", label: "Favoritos", icon: Heart },
-            { href: "/configuracoes", label: "Mais", icon: LayoutGrid },
+            { href: "/conta", label: "Conta", icon: LayoutGrid },
           ].map((item) => {
             const Icon = item.icon;
             const active = pathname === item.href;

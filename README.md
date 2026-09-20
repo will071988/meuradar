@@ -6,12 +6,15 @@ O **MeuRadar** é uma central inteligente de informações úteis do dia a dia: 
 
 Sprint 1 — fundação técnica e visual: dashboard navegável, responsivo, com dados mockados, pronto para deploy.
 
+Sprint 2 — autenticação, perfil e personalização: Supabase Auth (com fallback demo local), páginas `/login`, `/cadastro`, `/conta`, preferências persistentes e `supabase/schema.sql`.
+
 ## Stack
 
 - Next.js 14 (App Router)
 - React 18 + TypeScript
 - Tailwind CSS 3
 - Lucide React (ícones)
+- Supabase Auth + Postgres (`@supabase/supabase-js`, `@supabase/ssr`)
 
 ## Como executar
 
@@ -50,19 +53,30 @@ src/
   components/
     layout/               # Sidebar, Header, MobileNav, AppShell, Logo, ModulePage
     dashboard/            # WeatherCard, MarketCard, NewsCard, PackageCard, ...
+    auth/                 # AuthProvider, AuthForm (Sprint 2)
+    preferences/          # PreferencesForm (Sprint 2)
     ui/                   # Card, Badge, Button, SectionHeader
   data/
     mock.ts               # Dados mockados centralizados
   types/
-    index.ts
+    index.ts              # + AppUser, UserPreferences (Sprint 2)
   lib/
     utils.ts
+    supabase.ts           # client browser + isSupabaseConfigured (Sprint 2)
+    preferences.ts        # interesses, defaults, localStorage (Sprint 2)
+supabase/
+  schema.sql              # profiles + preferences + RLS + trigger (Sprint 2)
 public/
   favicon.svg
   branding/logo.svg
 ```
 
-## Módulos atuais (Sprint 1)
+## Módulos atuais (Sprint 1 + 2)
+
+- Painel Hoje (`/`) — saudação, Seu Radar de Hoje, clima, mercado, encomendas, preços, vagas, notícias, esportes, calendário
+- Meu Radar (`/meu-radar`) — personalizado por interesses/cidade/time (Sprint 2)
+- Conta (`/conta`) — perfil + preferências + logout (Sprint 2)
+- Login (`/login`) / Cadastro (`/cadastro`) — Supabase ou demo local (Sprint 2)
 
 - Painel Hoje (`/`) — saudação, Seu Radar de Hoje, clima, mercado, encomendas, preços, vagas, notícias, esportes, calendário
 - Meu Radar (`/meu-radar`)
@@ -79,10 +93,19 @@ Páginas internas exibem layout consistente + card "Módulo em preparação". Ne
 
 ## Roadmap resumido
 
-- Sprint 2 — Autenticação, perfil e personalização (Supabase)
+- Sprint 2 — Autenticação, perfil e personalização (Supabase) ✅ CONCLUÍDA
 - Sprint 3 — Integrações reais (clima, notícias, mercado)
 - Sprint 4 — Radares personalizados + alertas
 - Futuro — MeuRadar Pro, PWA completa, IA e monetização
+
+## Supabase (Sprint 2)
+
+1. Crie um projeto em https://supabase.com/dashboard
+2. Copie `.env.example` para `.env.local` e preencha:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+3. No SQL Editor, execute `supabase/schema.sql` (cria `profiles`, `preferences`, RLS e trigger)
+4. `npm run dev` — login/cadastro passam a usar o Supabase. Sem env, o app usa demo local.
 
 ---
 

@@ -78,3 +78,22 @@ export interface RadarFeedItem {
   text: string;
   icon: "cloud-rain" | "tag" | "trophy" | "package" | "bell";
 }
+
+export interface AppUser {
+  id: string;
+  email: string;
+  name: string;
+}
+
+export interface UserPreferences {
+  interests: string[];
+  city: string;
+  team: string;
+  notifyEmail: boolean;
+  notifyPush: boolean;
+}
+
+export interface InterestOption {
+  id: string;
+  label: string;
+}

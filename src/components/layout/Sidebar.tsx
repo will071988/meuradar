@@ -12,6 +12,7 @@ import {
   Settings,
   Tags,
   Trophy,
+  User,
   Wrench,
   Briefcase,
 } from "lucide-react";
@@ -28,6 +29,7 @@ const navItems = [
   { href: "/vagas", label: "Vagas", icon: Briefcase },
   { href: "/esportes", label: "Esportes", icon: Trophy },
   { href: "/ferramentas", label: "Ferramentas", icon: Wrench },
+  { href: "/conta", label: "Conta", icon: User },
   { href: "/configuracoes", label: "Configurações", icon: Settings },
 ];
 

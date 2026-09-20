@@ -1,13 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { Bell, Menu, Search } from "lucide-react";
 import { LogoMark } from "./Logo";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 interface HeaderProps {
   onMenuClick: () => void;
 }
 
 export function Header({ onMenuClick }: HeaderProps) {
+  const { user, loading } = useAuth();
+  const displayName = user ? user.name : "William";
+  const initial = displayName.charAt(0).toUpperCase() || "W";
+
   return (
     <header className="sticky top-0 z-20 border-b border-slate-100 bg-white/90 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6">
@@ -47,17 +53,45 @@ export function Header({ onMenuClick }: HeaderProps) {
             <Bell className="h-5 w-5" aria-hidden="true" />
             <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#FF8A3D]" />
           </button>
-          <div className="flex items-center gap-2">
-            <span
-              aria-hidden="true"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0B2D5B] text-sm font-bold text-white"
-            >
-              W
-            </span>
-            <span className="hidden text-sm font-semibold text-slate-700 sm:block">
-              Olá, William
-            </span>
-          </div>
+          {loading ? (
+            <span className="h-10 w-28 animate-pulse rounded-xl bg-slate-100" aria-hidden="true" />
+          ) : user ? (
+            <Link href="/conta" className="flex items-center gap-2 rounded-xl hover:bg-slate-50">
+              <span
+                aria-hidden="true"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0B2D5B] text-sm font-bold text-white"
+              >
+                {initial}
+              </span>
+              <span className="hidden max-w-32 truncate text-sm font-semibold text-slate-700 sm:block">
+                Olá, {displayName}
+              </span>
+            </Link>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link
+                href="/login"
+                className="rounded-xl bg-[#0B2D5B] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#123e7a]"
+              >
+                Entrar
+              </Link>
+              <Link
+                href="/conta"
+                className="hidden items-center gap-2 sm:flex"
+                aria-label="Conta demo"
+              >
+                <span
+                  aria-hidden="true"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 text-sm font-bold text-[#0B2D5B]"
+                >
+                  W
+                </span>
+                <span className="hidden text-sm font-semibold text-slate-700 lg:block">
+                  Olá, William
+                </span>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
