@@ -1,4 +1,4 @@
--- MeuRadar — Sprint 2 schema
+-- MeuRadar — Sprint 2 + Sprint 4 schema
 -- Execute no SQL Editor do Supabase (https://supabase.com/dashboard).
 
 -- Perfis (1:1 com auth.users)
@@ -53,3 +53,21 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+-- Sprint 4 — Radares personalizados
+create table if not exists public.radars (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  title text not null,
+  type text not null default 'custom',
+  target text not null default '',
+  city text not null default 'Rio de Janeiro, RJ',
+  active boolean not null default true,
+  created_at timestamptz default now()
+);
+
+alter table public.radars enable row level security;
+
+drop policy if exists "radars_owner" on public.radars;
+create policy "radars_owner" on public.radars
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);

@@ -105,3 +105,37 @@ export interface ApiResponse<T> {
   updatedAt: string;
   data: T;
 }
+
+export type RadarType =
+  | "preco"
+  | "clima"
+  | "mercado"
+  | "concurso"
+  | "vaga"
+  | "esporte"
+  | "encomenda"
+  | "custom";
+
+export interface Radar {
+  id: string;
+  title: string;
+  type: RadarType;
+  target: string;
+  city: string;
+  active: boolean;
+  createdAt: string;
+}
+
+export interface RadarTypeOption {
+  id: RadarType;
+  label: string;
+  example: string;
+  targetLabel: string;
+  targetPlaceholder: string;
+}
+
+export interface RadarAlert {
+  radarId: string;
+  title: string;
+  message: string;
+}

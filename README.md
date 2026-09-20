@@ -10,6 +10,8 @@ Sprint 2 — autenticação, perfil e personalização: Supabase Auth (com fallb
 
 Sprint 3 — integrações reais: `/api/clima` (Open-Meteo, sem chave), `/api/mercado` (AwesomeAPI, sem chave), `/api/noticias` (NewsAPI opcional) — todas com cache em memória + fallback para `src/data/mock.ts`. Páginas `/clima`, `/mercado`, `/noticias` com badge Ao vivo/Demo, refresh e updatedAt.
 
+Sprint 4 — radares personalizados + alertas: CRUD em `/meu-radar` (8 tipos, seed com 3 exemplos, persistência local), motor `evaluateRadars()` cruzando radares com clima/mercado/mocks, sino de notificações no Header com dropdown + badge, tabela `radars` no Supabase (RLS).
+
 ## Stack
 
 - Next.js 14 (App Router)
@@ -57,6 +59,9 @@ src/
     dashboard/            # WeatherCard, MarketCard, NewsCard, PackageCard, ...
     auth/                 # AuthProvider, AuthForm (Sprint 2)
     preferences/          # PreferencesForm (Sprint 2)
+    radars/               # RadarForm, RadarCard (Sprint 4)
+    notifications/        # NotificationsBell (Sprint 4)
+    data/                 # SourceBadge (Sprint 3)
     ui/                   # Card, Badge, Button, SectionHeader
   data/
     mock.ts               # Dados mockados centralizados
@@ -69,17 +74,18 @@ src/
     cache.ts              # cache em memória + fetchWithTimeout (Sprint 3)
     format.ts             # BRL, %, timeAgo (Sprint 3)
     useApi.ts             # hook client p/ API routes (Sprint 3)
+    radars.ts             # tipos, CRUD local, evaluateRadars() (Sprint 4)
 supabase/
-  schema.sql              # profiles + preferences + RLS + trigger (Sprint 2)
+  schema.sql              # profiles + preferences + RLS + trigger (Sprint 2) + radars (Sprint 4)
 public/
   favicon.svg
   branding/logo.svg
 ```
 
-## Módulos atuais (Sprint 1 + 2 + 3)
+## Módulos atuais (Sprint 1–4)
 
 - Painel Hoje (`/`) — saudação, Seu Radar de Hoje, clima, mercado, encomendas, preços, vagas, notícias, esportes, calendário (mock Sprint 1)
-- Meu Radar (`/meu-radar`) — personalizado por interesses/cidade/time (Sprint 2)
+- Meu Radar (`/meu-radar`) — CRUD de radares + alertas avaliados ao vivo (Sprint 4)
 - Conta (`/conta`) — perfil + preferências + logout (Sprint 2)
 - Login (`/login`) / Cadastro (`/cadastro`) — Supabase ou demo local (Sprint 2)
 - Clima (`/clima`) — ao vivo Open-Meteo + fallback demo (Sprint 3)
@@ -91,8 +97,9 @@ public/
 
 - Sprint 2 — Autenticação, perfil e personalização (Supabase) ✅ CONCLUÍDA
 - Sprint 3 — Integrações reais (clima, notícias, mercado) ✅ CONCLUÍDA
-- Sprint 4 — Radares personalizados + alertas
-- Futuro — MeuRadar Pro, PWA completa, IA e monetização
+- Sprint 4 — Radares personalizados + alertas ✅ CONCLUÍDA
+- Sprint 5 — Sync nuvem dos radares, cron/workers, PWA, MeuRadar Pro
+- Futuro — IA e monetização
 
 ## APIs (Sprint 3)
 
@@ -101,14 +108,14 @@ public/
 - Notícias: opcional. Sem `NEWS_API_KEY`, `GET /api/noticias` retorna `newsMock` (demo). Com chave da NewsAPI, retorna manchetes BR, cache 15 min.
 - Badge “Ao vivo/Demo” + botão Atualizar + timestamp em cada página.
 
-## Supabase (Sprint 2)
+## Supabase (Sprint 2 + 4)
 
 1. Crie um projeto em https://supabase.com/dashboard
 2. Copie `.env.example` para `.env.local` e preencha:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-3. No SQL Editor, execute `supabase/schema.sql` (cria `profiles`, `preferences`, RLS e trigger)
-4. `npm run dev` — login/cadastro passam a usar o Supabase. Sem env, o app usa demo local.
+3. No SQL Editor, execute `supabase/schema.sql` (cria `profiles`, `preferences`, `radars`, RLS e trigger)
+4. `npm run dev` — login/cadastro passam a usar o Supabase. Sem env, o app usa demo local (radares em localStorage).
 
 ---
 

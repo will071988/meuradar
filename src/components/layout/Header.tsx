@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Menu, Search } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import { LogoMark } from "./Logo";
+import { NotificationsBell } from "@/components/notifications/NotificationsBell";
 import { useAuth } from "@/components/auth/AuthProvider";
 
 interface HeaderProps {
@@ -45,14 +46,7 @@ export function Header({ onMenuClick }: HeaderProps) {
         </div>
 
         <div className="ml-auto flex items-center gap-3">
-          <button
-            type="button"
-            aria-label="Notificações"
-            className="relative rounded-full border border-slate-200 p-2.5 text-[#0B2D5B] hover:bg-slate-50"
-          >
-            <Bell className="h-5 w-5" aria-hidden="true" />
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#FF8A3D]" />
-          </button>
+          <NotificationsBell />
           {loading ? (
             <span className="h-10 w-28 animate-pulse rounded-xl bg-slate-100" aria-hidden="true" />
           ) : user ? (
