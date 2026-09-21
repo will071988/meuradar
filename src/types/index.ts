@@ -124,6 +124,8 @@ export interface Radar {
   city: string;
   active: boolean;
   createdAt: string;
+  /** Id da linha no Supabase quando sincronizado (Sprint 5). */
+  cloudId?: string;
 }
 
 export interface RadarTypeOption {

@@ -122,6 +122,7 @@ function sanitize(list: unknown): Radar[] | null {
       city: typeof r.city === "string" && r.city ? r.city : weatherMock.city,
       active: r.active !== false,
       createdAt: typeof r.createdAt === "string" ? r.createdAt : new Date().toISOString(),
+      ...(typeof r.cloudId === "string" ? { cloudId: r.cloudId } : {}),
     });
   }
   return out;

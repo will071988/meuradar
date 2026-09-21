@@ -12,6 +12,8 @@ Sprint 3 — integrações reais: `/api/clima` (Open-Meteo, sem chave), `/api/me
 
 Sprint 4 — radares personalizados + alertas: CRUD em `/meu-radar` (8 tipos, seed com 3 exemplos, persistência local), motor `evaluateRadars()` cruzando radares com clima/mercado/mocks, sino de notificações no Header com dropdown + badge, tabela `radars` no Supabase (RLS).
 
+Sprint 5 — sync nuvem + PWA + polish: radares sincronizados por usuário no Supabase (offline-first), PWA base (manifest, ícones PNG, service worker), página `/pro`, sitemap/robots, `not-found`/`error`/`loading`, deploy-ready.
+
 ## Stack
 
 - Next.js 14 (App Router)
@@ -43,10 +45,14 @@ npm run build
 src/
   app/
     page.tsx              # Dashboard principal (/)
-    meu-radar/page.tsx
-    clima/page.tsx
-    noticias/page.tsx
-    mercado/page.tsx
+    meu-radar/page.tsx    # CRUD + sync nuvem (Sprint 4/5)
+    clima/page.tsx        # ao vivo (Sprint 3)
+    noticias/page.tsx     # ao vivo/demo (Sprint 3)
+    mercado/page.tsx      # ao vivo (Sprint 3)
+    pro/page.tsx          # Planos Pro (Sprint 5)
+    manifest.ts           # PWA manifest (Sprint 5)
+    sitemap.ts / robots.ts# SEO (Sprint 5)
+    loading.tsx / error.tsx / not-found.tsx (Sprint 5)
     precos/page.tsx
     vagas/page.tsx
     esportes/page.tsx
@@ -75,17 +81,23 @@ src/
     format.ts             # BRL, %, timeAgo (Sprint 3)
     useApi.ts             # hook client p/ API routes (Sprint 3)
     radars.ts             # tipos, CRUD local, evaluateRadars() (Sprint 4)
-supabase/
-  schema.sql              # profiles + preferences + RLS + trigger (Sprint 2) + radars (Sprint 4)
+    radarsCloud.ts        # sync Supabase offline-first (Sprint 5)
 public/
   favicon.svg
   branding/logo.svg
+  sw.js                   # service worker base (Sprint 5)
+  icons/                  # icon-192/512 + apple-touch-icon (Sprint 5)
+scripts/
+  gen-icons.mjs           # gera PNGs sem dependências (Sprint 5)
+supabase/
+  schema.sql              # profiles + preferences + radars + RLS + trigger (Sprint 2/4)
 ```
 
-## Módulos atuais (Sprint 1–4)
+## Módulos atuais (Sprint 1–5)
 
 - Painel Hoje (`/`) — saudação, Seu Radar de Hoje, clima, mercado, encomendas, preços, vagas, notícias, esportes, calendário (mock Sprint 1)
-- Meu Radar (`/meu-radar`) — CRUD de radares + alertas avaliados ao vivo (Sprint 4)
+- Meu Radar (`/meu-radar`) — CRUD de radares + alertas avaliados ao vivo + sync nuvem (Sprint 4/5)
+- Pro (`/pro`) — planos Gratuito/Pro, linkado na Sidebar (Sprint 5)
 - Conta (`/conta`) — perfil + preferências + logout (Sprint 2)
 - Login (`/login`) / Cadastro (`/cadastro`) — Supabase ou demo local (Sprint 2)
 - Clima (`/clima`) — ao vivo Open-Meteo + fallback demo (Sprint 3)
@@ -98,8 +110,16 @@ public/
 - Sprint 2 — Autenticação, perfil e personalização (Supabase) ✅ CONCLUÍDA
 - Sprint 3 — Integrações reais (clima, notícias, mercado) ✅ CONCLUÍDA
 - Sprint 4 — Radares personalizados + alertas ✅ CONCLUÍDA
-- Sprint 5 — Sync nuvem dos radares, cron/workers, PWA, MeuRadar Pro
-- Futuro — IA e monetização
+- Sprint 5 — Sync nuvem + PWA + Pro + polish ✅ CONCLUÍDA
+- Futuro — cron/workers push/WhatsApp, preços reais por produto, IA e monetização
+
+## Deploy (Vercel)
+
+1. Suba o repo (já em https://github.com/will071988/meuradar).
+2. Importe na Vercel com defaults Next.js. Env vars de produção:
+   - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (obrigatórias p/ auth + sync)
+   - `NEWS_API_KEY` (opcional), `NEXT_PUBLIC_APP_URL=https://seu-dominio.vercel.app`
+3. `npm run build` passa com 16 static + 3 dynamic (`/api/*`) + manifest/sitemap/robots.
 
 ## APIs (Sprint 3)
 

@@ -4,12 +4,14 @@ import { useState } from "react";
 import { Header } from "./Header";
 import { MobileNav } from "./MobileNav";
 import { Sidebar } from "./Sidebar";
+import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#EAF2F8]/50">
+      <ServiceWorkerRegister />
       <div className="flex">
         <Sidebar />
         <div className="min-w-0 flex-1">

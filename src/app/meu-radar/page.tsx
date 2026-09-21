@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
-import { RefreshCw } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Cloud, CloudOff, RefreshCw } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { RadarForm } from "@/components/radars/RadarForm";
@@ -11,6 +11,13 @@ import { SourceBadge } from "@/components/data/SourceBadge";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { INTERESTS, loadPreferences } from "@/lib/preferences";
 import { createRadar, evaluateRadars, loadRadars, saveRadars } from "@/lib/radars";
+import {
+  canSyncCloud,
+  deleteCloudRadar,
+  fetchCloudRadars,
+  insertCloudRadar,
+  updateCloudRadar,
+} from "@/lib/radarsCloud";
 import type { ApiResponse, MarketItem, Radar, RadarAlert, UserPreferences, WeatherData } from "@/types";
 import { DEFAULT_PREFERENCES } from "@/lib/preferences";
 
@@ -21,11 +28,50 @@ export default function MeuRadarPage() {
   const [alerts, setAlerts] = useState<RadarAlert[]>([]);
   const [source, setSource] = useState<"live" | "demo" | null>(null);
   const [checking, setChecking] = useState(false);
+  const [cloudState, setCloudState] = useState<"off" | "syncing" | "on" | "error">("off");
+  const syncedOnce = useRef(false);
 
   useEffect(() => {
     setPrefs(loadPreferences());
     setRadars(loadRadars());
   }, []);
+
+  // Sync nuvem (Sprint 5): busca na nuvem quando logado; migra local se nuvem vazia.
+  useEffect(() => {
+    if (authLoading || syncedOnce.current) return;
+    if (!user || !canSyncCloud()) {
+      setCloudState(user ? "error" : "off");
+      return;
+    }
+    syncedOnce.current = true;
+    setCloudState("syncing");
+
+    fetchCloudRadars(user.id)
+      .then((cloud) => {
+        if (cloud === null) {
+          setCloudState("error");
+          return;
+        }
+        if (cloud.length > 0) {
+          setRadars(cloud);
+          saveRadars(cloud);
+          setCloudState("on");
+        } else {
+          const local = loadRadars();
+          if (local.length === 0) {
+            setCloudState("on");
+            return;
+          }
+          Promise.all(local.map((r) => insertCloudRadar(user.id, r))).then((ids) => {
+            const merged = local.map((r, i) => (ids[i] ? { ...r, cloudId: ids[i] as string } : r));
+            setRadars(merged);
+            saveRadars(merged);
+            setCloudState("on");
+          });
+        }
+      })
+      .catch(() => setCloudState("error"));
+  }, [authLoading, user]);
 
   const check = useCallback(() => {
     const active = radars.filter((r) => r.active);
@@ -62,6 +108,38 @@ export default function MeuRadarPage() {
     saveRadars(next);
   }
 
+  function handleCreate(input: { title: string; type: Radar["type"]; target: string; city: string }) {
+    const radar = createRadar(input);
+    persist([...radars, radar]);
+    if (user && canSyncCloud()) {
+      void insertCloudRadar(user.id, radar).then((id) => {
+        if (!id) return;
+        setRadars((prev) => {
+          const next = prev.map((r) => (r.id === radar.id ? { ...r, cloudId: id } : r));
+          saveRadars(next);
+          return next;
+        });
+      });
+    }
+  }
+
+  function handleToggle(id: string) {
+    const target = radars.find((r) => r.id === id);
+    const next = radars.map((r) => (r.id === id ? { ...r, active: !r.active } : r));
+    persist(next);
+    if (target?.cloudId && canSyncCloud()) {
+      void updateCloudRadar(target.cloudId, { active: !target.active });
+    }
+  }
+
+  function handleDelete(id: string) {
+    const target = radars.find((r) => r.id === id);
+    persist(radars.filter((r) => r.id !== id));
+    if (target?.cloudId && canSyncCloud()) {
+      void deleteCloudRadar(target.cloudId);
+    }
+  }
+
   const labels = INTERESTS.filter((o) => prefs.interests.includes(o.id));
   const alertByRadar = new Map(alerts.map((a) => [a.radarId, a]));
 
@@ -72,10 +150,23 @@ export default function MeuRadarPage() {
           <h1 className="text-2xl font-extrabold tracking-tight text-[#0B2D5B] sm:text-3xl">
             Meu Radar
           </h1>
-          <p className="mt-1 text-sm text-slate-500 sm:text-base">
-            {user
-              ? `Radar de ${user.name} • ${prefs.city}`
-              : "Seus monitoramentos personalizados e alertas inteligentes."}
+          <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-slate-500 sm:text-base">
+            {user ? `Radar de ${user.name} • ${prefs.city}` : "Seus monitoramentos personalizados e alertas inteligentes."}
+            {user && cloudState === "on" && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 ring-1 ring-inset ring-emerald-200">
+                <Cloud className="h-3 w-3" aria-hidden="true" /> Nuvem ativa
+              </span>
+            )}
+            {user && cloudState === "syncing" && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-bold text-slate-500">
+                Sincronizando...
+              </span>
+            )}
+            {user && cloudState === "error" && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-bold text-amber-700 ring-1 ring-inset ring-amber-200">
+                <CloudOff className="h-3 w-3" aria-hidden="true" /> Somente local
+              </span>
+            )}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -92,7 +183,7 @@ export default function MeuRadarPage() {
           <div>
             <p className="text-base font-bold text-[#0B2D5B]">Entre para sincronizar na nuvem</p>
             <p className="text-sm text-slate-500">
-              Sem conta, seus radares ficam só neste navegador. Tabela `radars` pronta no Supabase.
+              Sem conta, seus radares ficam só neste navegador.
             </p>
           </div>
           <div className="flex gap-2">
@@ -128,9 +219,7 @@ export default function MeuRadarPage() {
         </Card>
       )}
 
-      <RadarForm
-        onCreate={(input) => persist([...radars, createRadar(input)])}
-      />
+      <RadarForm onCreate={handleCreate} />
 
       <div>
         <h2 className="mb-3 text-base font-bold text-[#0B2D5B]">
@@ -149,10 +238,8 @@ export default function MeuRadarPage() {
                 key={radar.id}
                 radar={radar}
                 alert={alertByRadar.get(radar.id)}
-                onToggle={(id) =>
-                  persist(radars.map((r) => (r.id === id ? { ...r, active: !r.active } : r)))
-                }
-                onDelete={(id) => persist(radars.filter((r) => r.id !== id))}
+                onToggle={handleToggle}
+                onDelete={handleDelete}
               />
             ))}
           </div>

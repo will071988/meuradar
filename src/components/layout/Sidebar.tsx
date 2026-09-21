@@ -72,12 +72,12 @@ export function Sidebar() {
             <p className="text-sm font-bold">MeuRadar Pro</p>
           </div>
           <p className="mt-1 text-xs text-white/80">Mais recursos para o seu dia.</p>
-          <button
-            type="button"
-            className="mt-3 w-full rounded-xl bg-[#FF8A3D] px-3 py-2 text-sm font-bold text-white transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          <Link
+            href="/pro"
+            className="mt-3 block w-full rounded-xl bg-[#FF8A3D] px-3 py-2 text-center text-sm font-bold text-white transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             Conheça agora
-          </button>
+          </Link>
         </div>
       </div>
     </aside>
