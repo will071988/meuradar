@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CloudSun, MapPin, TriangleAlert } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { weatherMock } from "@/data/mock";
@@ -39,9 +40,12 @@ export function WeatherCard() {
         <div className="min-w-0">
           <p className="text-sm font-bold">{w.alertTitle}</p>
           <p className="text-xs text-white/80">{w.alertDescription}</p>
-          <span className="mt-1 inline-block cursor-pointer text-xs font-bold text-white underline underline-offset-2">
+          <Link
+            href="/clima"
+            className="mt-1 inline-block text-xs font-bold text-white underline underline-offset-2"
+          >
             Ver detalhes
-          </span>
+          </Link>
         </div>
       </div>
     </Card>
