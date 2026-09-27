@@ -103,7 +103,7 @@ supabase/
 - Clima (`/clima`) — ao vivo Open-Meteo + fallback demo (Sprint 3)
 - Mercado (`/mercado`) — ao vivo AwesomeAPI + fallback demo (Sprint 3)
 - Notícias (`/noticias`) — NewsAPI quando há chave + fallback demo (Sprint 3)
-- Vagas (`/vagas`) — ao vivo Arbeitnow + Remotive com busca e filtro remoto; concursos em curadoria demo (Sprint 7)
+- Vagas (`/vagas`) — ao vivo: Adzuna BR (com chaves, agrega InfoJobs/Indeed) + Arbeitnow + Remotive; busca por cargo/local, filtro remoto (Sprint 7+)
 - Preços (`/precos`) — radar de preços funcional: CRUD, histórico com sparkline, alerta no alvo, sync nuvem (Sprint 6)
 - Vagas (`/vagas`), Esportes (`/esportes`), Ferramentas (`/ferramentas`) — ainda mock/em preparação
 
@@ -134,7 +134,7 @@ supabase/
 - Clima: sem chave. `GET /api/clima?city=Rio%20de%20Janeiro` → Open-Meteo (geocoding + forecast), cache 10 min, fallback `weatherMock`.
 - Mercado: sem chave. `GET /api/mercado` → AwesomeAPI USD/EUR/BTC-BRL, cache 5 min, Ibovespa segue demo, fallback `marketMock`.
 - Notícias: opcional. Sem `NEWS_API_KEY`, `GET /api/noticias` retorna `newsMock` (demo). Com chave da NewsAPI, retorna manchetes BR, cache 15 min.
-- Vagas: sem chave. `GET /api/vagas` → Arbeitnow + Remotive (deduplicadas), cache 30 min, fallback demo.
+- Vagas: sem chave (`GET /api/vagas`) → Arbeitnow + Remotive (deduplicadas), cache 30 min. Com `ADZUNA_APP_ID` + `ADZUNA_APP_KEY` (grátis em developer.adzuna.com), `GET /api/vagas?q=&where=Rio de Janeiro` retorna vagas BR (agrega InfoJobs/Indeed). Scraping direto desses sites é bloqueado por anti-bot — usar o agregador.
 - Badge “Ao vivo/Demo” + botão Atualizar + timestamp em cada página.
 
 ## Supabase (Sprint 2 + 4)

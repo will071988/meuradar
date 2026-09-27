@@ -7,8 +7,71 @@ export const dynamic = "force-dynamic";
 export const preferredRegion = "gru1";
 
 const TTL_MS = 30 * 60 * 1000;
-const KEY = "vagas:v1";
 
+interface AdzunaJob {
+  id?: string;
+  title?: string;
+  company?: { display_name?: string };
+  location?: { display_name?: string };
+  redirect_url?: string;
+  created?: string;
+  salary_min?: number;
+  salary_max?: number;
+  contract_time?: string;
+}
+
+interface AdzunaResponse {
+  results?: AdzunaJob[];
+}
+
+function salaryText(min?: number, max?: number): string | undefined {
+  if (typeof min !== "number" && typeof max !== "number") return undefined;
+  const fmt = (v: number) =>
+    v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+  if (typeof min === "number" && typeof max === "number" && max > min) {
+    return `${fmt(min)} – ${fmt(max)}`;
+  }
+  const v = (typeof max === "number" ? max : min) as number;
+  return fmt(v);
+}
+
+/** Adzuna BR (agrega InfoJobs, Indeed e outros no Brasil). Precisa de chaves gratuitas. */
+async function fromAdzuna(q: string, where: string): Promise<RemoteJob[]> {
+  const appId = process.env.ADZUNA_APP_ID?.trim();
+  const appKey = process.env.ADZUNA_APP_KEY?.trim();
+  if (!appId || !appKey) return [];
+
+  const params = new URLSearchParams({
+    app_id: appId,
+    app_key: appKey,
+    results_per_page: "15",
+    sort_by: "date",
+  });
+  if (q) params.set("what", q);
+  params.set("where", where || "Rio de Janeiro");
+  params.set("content-type", "application/json");
+
+  const res = await fetchWithTimeout(
+    `https://api.adzuna.com/v1/api/jobs/br/search/1?${params.toString()}`,
+    9000
+  );
+  if (!res.ok) return [];
+  const json = (await res.json()) as AdzunaResponse;
+  return (json.results ?? [])
+    .filter((j) => j.title && j.id)
+    .map((j) => ({
+      id: `az-${j.id}`,
+      title: j.title as string,
+      company: j.company?.display_name || "Empresa",
+      location: j.location?.display_name || where || "Brasil",
+      remote: /remot|home office/i.test(
+        `${j.title} ${j.location?.display_name ?? ""} ${j.contract_time ?? ""}`
+      ),
+      url: j.redirect_url || "https://www.adzuna.com.br",
+      postedAt: j.created ? ago(j.created, "Recente") : "Recente",
+      salary: salaryText(j.salary_min, j.salary_max),
+    }));
+}
 interface ArbeitnowJob {
   slug?: string;
   title?: string;
@@ -84,17 +147,26 @@ async function fromRemotive(): Promise<RemoteJob[]> {
     }));
 }
 
-export async function GET(): Promise<NextResponse<ApiResponse<RemoteJob[]>>> {
-  const cached = getCache<ApiResponse<RemoteJob[]>>(KEY);
+export async function GET(request: Request): Promise<NextResponse<ApiResponse<RemoteJob[]>>> {
+  const { searchParams } = new URL(request.url);
+  const q = searchParams.get("q")?.trim() ?? "";
+  const where = searchParams.get("where")?.trim() ?? "";
+  const key = `vagas:${q.toLowerCase()}|${where.toLowerCase()}`;
+  const cached = getCache<ApiResponse<RemoteJob[]>>(key);
   if (cached) return NextResponse.json(cached);
 
   try {
-    const [a, r] = await Promise.all([fromArbeitnow(), fromRemotive()]);
+    // BR primeiro (Adzuna agrega InfoJobs/Indeed); depois globais; depois demo.
+    const [az, a, r] = await Promise.all([
+      fromAdzuna(q, where),
+      q || where ? Promise.resolve([] as RemoteJob[]) : fromArbeitnow(),
+      q || where ? Promise.resolve([] as RemoteJob[]) : fromRemotive(),
+    ]);
     const seen = new Set<string>();
-    const data = [...a, ...r].filter((j) => {
-      const key = `${j.title}|${j.company}`.toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key);
+    const data = [...az, ...a, ...r].filter((j) => {
+      const k = `${j.title}|${j.company}`.toLowerCase();
+      if (seen.has(k)) return false;
+      seen.add(k);
       return true;
     });
 
@@ -103,9 +175,9 @@ export async function GET(): Promise<NextResponse<ApiResponse<RemoteJob[]>>> {
     const payload: ApiResponse<RemoteJob[]> = {
       source: "live",
       updatedAt: new Date().toISOString(),
-      data: data.slice(0, 16),
+      data: data.slice(0, 20),
     };
-    setCache(KEY, payload, TTL_MS);
+    setCache(key, payload, TTL_MS);
     return NextResponse.json(payload);
   } catch {
     return NextResponse.json({

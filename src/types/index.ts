@@ -168,4 +168,5 @@ export interface RemoteJob {
   remote: boolean;
   url: string;
   postedAt: string;
+  salary?: string;
 }
