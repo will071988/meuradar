@@ -64,15 +64,9 @@ export function Header({ onMenuClick }: HeaderProps) {
           ) : (
             <div className="flex items-center gap-2">
               <Link
-                href="/login"
-                className="rounded-xl bg-[#0B2D5B] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#123e7a]"
-              >
-                Entrar
-              </Link>
-              <Link
                 href="/conta"
-                className="hidden items-center gap-2 sm:flex"
                 aria-label="Conta demo"
+                className="flex items-center gap-2 rounded-xl hover:bg-slate-50"
               >
                 <span
                   aria-hidden="true"
@@ -80,9 +74,15 @@ export function Header({ onMenuClick }: HeaderProps) {
                 >
                   W
                 </span>
-                <span className="hidden text-sm font-semibold text-slate-700 lg:block">
+                <span className="hidden text-sm font-semibold text-slate-700 sm:block">
                   Olá, William
                 </span>
+              </Link>
+              <Link
+                href="/login"
+                className="hidden rounded-xl bg-[#0B2D5B] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#123e7a] md:block"
+              >
+                Entrar
               </Link>
             </div>
           )}
