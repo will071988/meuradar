@@ -103,6 +103,7 @@ supabase/
 - Clima (`/clima`) — ao vivo Open-Meteo + fallback demo (Sprint 3)
 - Mercado (`/mercado`) — ao vivo AwesomeAPI + fallback demo (Sprint 3)
 - Notícias (`/noticias`) — NewsAPI quando há chave + fallback demo (Sprint 3)
+- Vagas (`/vagas`) — ao vivo Arbeitnow + Remotive com busca e filtro remoto; concursos em curadoria demo (Sprint 7)
 - Preços (`/precos`) — radar de preços funcional: CRUD, histórico com sparkline, alerta no alvo, sync nuvem (Sprint 6)
 - Vagas (`/vagas`), Esportes (`/esportes`), Ferramentas (`/ferramentas`) — ainda mock/em preparação
 
@@ -113,7 +114,8 @@ supabase/
 - Sprint 4 — Radares personalizados + alertas ✅ CONCLUÍDA
 - Sprint 5 — Sync nuvem + PWA + Pro + polish ✅ CONCLUÍDA
 - Sprint 6 — Radar de Preços funcional (CRUD, histórico, sparkline, `price_tracks`) ✅ CONCLUÍDA
-- Futuro — cron/workers push/WhatsApp, vagas/esportes/ferramentas reais, IA e monetização
+- Sprint 7 — Vagas ao vivo (Arbeitnow + Remotive, `/api/vagas`) ✅ CONCLUÍDA
+- Futuro — cron/workers push/WhatsApp, esportes/ferramentas reais, concursos com API, IA e monetização
 
 ## Produção ✅ NO AR
 
@@ -132,6 +134,7 @@ supabase/
 - Clima: sem chave. `GET /api/clima?city=Rio%20de%20Janeiro` → Open-Meteo (geocoding + forecast), cache 10 min, fallback `weatherMock`.
 - Mercado: sem chave. `GET /api/mercado` → AwesomeAPI USD/EUR/BTC-BRL, cache 5 min, Ibovespa segue demo, fallback `marketMock`.
 - Notícias: opcional. Sem `NEWS_API_KEY`, `GET /api/noticias` retorna `newsMock` (demo). Com chave da NewsAPI, retorna manchetes BR, cache 15 min.
+- Vagas: sem chave. `GET /api/vagas` → Arbeitnow + Remotive (deduplicadas), cache 30 min, fallback demo.
 - Badge “Ao vivo/Demo” + botão Atualizar + timestamp em cada página.
 
 ## Supabase (Sprint 2 + 4)

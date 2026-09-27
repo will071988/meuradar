@@ -159,3 +159,13 @@ export interface PriceTrack {
   /** Id da linha no Supabase quando sincronizado (Sprint 6). */
   cloudId?: string;
 }
+
+export interface RemoteJob {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  remote: boolean;
+  url: string;
+  postedAt: string;
+}
