@@ -1,4 +1,5 @@
 import { CalendarCard } from "@/components/dashboard/CalendarCard";
+import { Greeting } from "@/components/dashboard/Greeting";
 import { JobsCard } from "@/components/dashboard/JobsCard";
 import { MarketCard } from "@/components/dashboard/MarketCard";
 import { NewsCard } from "@/components/dashboard/NewsCard";
@@ -11,17 +12,7 @@ import { WeatherCard } from "@/components/dashboard/WeatherCard";
 export default function HomePage() {
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-slate-400">
-          Bom dia,
-        </p>
-        <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#0B2D5B] sm:text-4xl">
-          William ☀️
-        </h1>
-        <p className="mt-1 text-sm text-slate-500 sm:text-base">
-          Aqui está o que importa para hoje.
-        </p>
-      </div>
+      <Greeting />
 
       <RadarToday />
 
