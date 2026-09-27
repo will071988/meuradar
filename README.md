@@ -113,13 +113,17 @@ supabase/
 - Sprint 5 — Sync nuvem + PWA + Pro + polish ✅ CONCLUÍDA
 - Futuro — cron/workers push/WhatsApp, preços reais por produto, IA e monetização
 
-## Deploy (Vercel)
+## Produção ✅ NO AR
 
-1. Suba o repo (já em https://github.com/will071988/meuradar).
-2. Importe na Vercel com defaults Next.js. Env vars de produção:
-   - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (obrigatórias p/ auth + sync)
-   - `NEWS_API_KEY` (opcional), `NEXT_PUBLIC_APP_URL=https://seu-dominio.vercel.app`
-3. `npm run build` passa com 16 static + 3 dynamic (`/api/*`) + manifest/sitemap/robots.
+- Site: https://meuradar.vercel.app
+- Deploy via Vercel CLI (`vercel --prod`) a partir de `main`
+- Env vars de produção (Vercel → meuradar → Settings → Environment Variables):
+  - `NEXT_PUBLIC_SUPABASE_URL` = `https://uavzhegqnbqcyiuqedel.supabase.co`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = (chave anon do projeto, via `supabase projects api-keys`)
+  - `NEXT_PUBLIC_APP_URL` = `https://meuradar.vercel.app`
+  - `NEWS_API_KEY` (opcional — sem ela, notícias usam demo)
+- Banco: projeto Supabase `uavzhegqnbqcyiuqedel` com `supabase/schema.sql` aplicado (profiles, preferences, radars + RLS + trigger) e Auth com `site_url` + redirects para o domínio prod e `localhost:3000`
+- Mercado: cadeia AwesomeAPI → Frankfurter + CoinGecko → mock (região `gru1`)
 
 ## APIs (Sprint 3)
 
