@@ -90,7 +90,7 @@ public/
 scripts/
   gen-icons.mjs           # gera PNGs sem dependências (Sprint 5)
 supabase/
-  schema.sql              # profiles + preferences + radars + RLS + trigger (Sprint 2/4)
+  schema.sql              # profiles + preferences + radars + price_tracks + RLS (Sprint 2/4/6)
 ```
 
 ## Módulos atuais (Sprint 1–5)
@@ -103,7 +103,8 @@ supabase/
 - Clima (`/clima`) — ao vivo Open-Meteo + fallback demo (Sprint 3)
 - Mercado (`/mercado`) — ao vivo AwesomeAPI + fallback demo (Sprint 3)
 - Notícias (`/noticias`) — NewsAPI quando há chave + fallback demo (Sprint 3)
-- Preços (`/precos`), Vagas (`/vagas`), Esportes (`/esportes`), Ferramentas (`/ferramentas`) — ainda mock/em preparação
+- Preços (`/precos`) — radar de preços funcional: CRUD, histórico com sparkline, alerta no alvo, sync nuvem (Sprint 6)
+- Vagas (`/vagas`), Esportes (`/esportes`), Ferramentas (`/ferramentas`) — ainda mock/em preparação
 
 ## Roadmap resumido
 
@@ -111,7 +112,8 @@ supabase/
 - Sprint 3 — Integrações reais (clima, notícias, mercado) ✅ CONCLUÍDA
 - Sprint 4 — Radares personalizados + alertas ✅ CONCLUÍDA
 - Sprint 5 — Sync nuvem + PWA + Pro + polish ✅ CONCLUÍDA
-- Futuro — cron/workers push/WhatsApp, preços reais por produto, IA e monetização
+- Sprint 6 — Radar de Preços funcional (CRUD, histórico, sparkline, `price_tracks`) ✅ CONCLUÍDA
+- Futuro — cron/workers push/WhatsApp, vagas/esportes/ferramentas reais, IA e monetização
 
 ## Produção ✅ NO AR
 

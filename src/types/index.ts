@@ -141,3 +141,21 @@ export interface RadarAlert {
   title: string;
   message: string;
 }
+
+export interface PricePoint {
+  at: string;
+  price: number;
+}
+
+export interface PriceTrack {
+  id: string;
+  product: string;
+  store: string;
+  targetPrice: number;
+  currentPrice: number;
+  history: PricePoint[];
+  active: boolean;
+  createdAt: string;
+  /** Id da linha no Supabase quando sincronizado (Sprint 6). */
+  cloudId?: string;
+}

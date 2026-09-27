@@ -71,3 +71,22 @@ alter table public.radars enable row level security;
 drop policy if exists "radars_owner" on public.radars;
 create policy "radars_owner" on public.radars
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- Sprint 6 — Radar de Preços
+create table if not exists public.price_tracks (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  product text not null,
+  store text not null default 'Loja demo',
+  target_price numeric not null default 0,
+  current_price numeric not null default 0,
+  history jsonb not null default '[]'::jsonb,
+  active boolean not null default true,
+  created_at timestamptz default now()
+);
+
+alter table public.price_tracks enable row level security;
+
+drop policy if exists "price_tracks_owner" on public.price_tracks;
+create policy "price_tracks_owner" on public.price_tracks
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
