@@ -4,6 +4,7 @@ import { weatherMock } from "@/data/mock";
 import { fetchWithTimeout, getCache, setCache } from "@/lib/cache";
 
 export const dynamic = "force-dynamic";
+export const preferredRegion = "gru1";
 
 const TTL_MS = 10 * 60 * 1000;
 
