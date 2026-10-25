@@ -64,6 +64,16 @@ export interface SportMatch {
   home: string;
   away: string;
   time: string;
+  /** Dia do jogo (módulo /esportes, Sprint 8). */
+  day?: "hoje" | "amanha";
+  live?: boolean;
+}
+
+export interface Standing {
+  pos: number;
+  team: string;
+  pts: number;
+  games: number;
 }
 
 export interface CalendarEvent {

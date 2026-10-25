@@ -7,6 +7,7 @@ import type {
   PriceAlert,
   RadarFeedItem,
   SportMatch,
+  Standing,
   WeatherData,
 } from "@/types";
 
@@ -106,6 +107,25 @@ export const sportsMock: SportMatch[] = [
   { id: "m1", competition: "Libertadores", home: "Flamengo", away: "Bolívar", time: "21:30" },
   { id: "m2", competition: "Copa do Brasil", home: "Palmeiras", away: "Botafogo", time: "20:00" },
   { id: "m3", competition: "Brasileirão", home: "São Paulo", away: "Grêmio", time: "18:30" },
+];
+
+/** Agenda completa do módulo /esportes (Sprint 8). */
+export const sportsScheduleMock: SportMatch[] = [
+  ...sportsMock,
+  { id: "m4", competition: "Libertadores", home: "Atlético-MG", away: "River Plate", time: "19:00", day: "hoje", live: true },
+  { id: "m5", competition: "Brasileirão", home: "Flamengo", away: "Cruzeiro", time: "16:00", day: "hoje" },
+  { id: "m6", competition: "Brasileirão", home: "Botafogo", away: "Bahia", time: "18:30", day: "amanha" },
+  { id: "m7", competition: "Copa do Brasil", home: "Grêmio", away: "Athletico-PR", time: "21:30", day: "amanha" },
+  { id: "m8", competition: "Libertadores", home: "São Paulo", away: "Peñarol", time: "21:30", day: "amanha" },
+];
+
+export const standingsMock: Standing[] = [
+  { pos: 1, team: "Flamengo", pts: 33, games: 15 },
+  { pos: 2, team: "Palmeiras", pts: 31, games: 15 },
+  { pos: 3, team: "Cruzeiro", pts: 29, games: 15 },
+  { pos: 4, team: "Botafogo", pts: 27, games: 15 },
+  { pos: 5, team: "Bahia", pts: 25, games: 15 },
+  { pos: 6, team: "São Paulo", pts: 24, games: 15 },
 ];
 
 export const calendarMock: CalendarEvent[] = [
