@@ -93,7 +93,7 @@ supabase/
   schema.sql              # profiles + preferences + radars + price_tracks + RLS (Sprint 2/4/6)
 ```
 
-## Módulos atuais (Sprint 1–5)
+## Módulos atuais (Sprint 1–8)
 
 - Painel Hoje (`/`) — saudação, Seu Radar de Hoje, clima, mercado, encomendas, preços, vagas, notícias, esportes, calendário (mock Sprint 1)
 - Meu Radar (`/meu-radar`) — CRUD de radares + alertas avaliados ao vivo + sync nuvem (Sprint 4/5)
@@ -105,7 +105,8 @@ supabase/
 - Notícias (`/noticias`) — NewsAPI quando há chave + fallback demo (Sprint 3)
 - Vagas (`/vagas`) — ao vivo: Adzuna BR (com chaves, agrega InfoJobs/Indeed) + Arbeitnow + Remotive; busca por cargo/local, filtro remoto (Sprint 7+)
 - Preços (`/precos`) — radar de preços funcional: CRUD, histórico com sparkline, alerta no alvo, sync nuvem (Sprint 6)
-- Vagas (`/vagas`), Esportes (`/esportes`), Ferramentas (`/ferramentas`) — ainda mock/em preparação
+- Esportes (`/esportes`) — agenda com abas Hoje/Amanhã/Classificação, marcação AO VIVO e tabela do Brasileirão (Sprint 8)
+- Ferramentas (`/ferramentas`) — 3 utilidades funcionais: conversor de moeda (usa `/api/mercado`), calculadora de desconto e IMC (Sprint 8)
 
 ## Roadmap resumido
 
@@ -115,7 +116,8 @@ supabase/
 - Sprint 5 — Sync nuvem + PWA + Pro + polish ✅ CONCLUÍDA
 - Sprint 6 — Radar de Preços funcional (CRUD, histórico, sparkline, `price_tracks`) ✅ CONCLUÍDA
 - Sprint 7 — Vagas ao vivo (Arbeitnow + Remotive, `/api/vagas`) ✅ CONCLUÍDA
-- Futuro — cron/workers push/WhatsApp, esportes/ferramentas reais, concursos com API, IA e monetização
+- Auditoria master prompt — itens 14–19, 25, 29 PASS; item 17 corrigido; item 28 (testes) em aberto
+- Futuro — testes automatizados, cron/workers push/WhatsApp, concursos com API, esportes ao vivo, IA e monetização
 
 ## Produção ✅ NO AR
 
