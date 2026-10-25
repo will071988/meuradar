@@ -2,7 +2,7 @@
 Atualizado: 25/10/2026 (verificado contra o repositório: `git log` = caa8285, árvore limpa)
 
 ## Fase atual
-Auditoria do master prompt (itens verificáveis) — concluída em 25/10/2026; correção do item 17 aplicada (commit be62171, aguardando push/deploy).
+Auditoria do master prompt (itens verificáveis) — concluída em 25/10/2026; item 17 corrigido e PUBLICADO (be62171 + 232e368, deploy validado em prod).
 
 ## Concluído com evidência
 - [x] Sprints 1–7 (fundação, auth, APIs ao vivo, radares/alertas, sync nuvem/PWA/Pro, preços, vagas) — evidência: commits d75ce97, 39cc84c, 3090c74, 9eb2a0a, ed60226, 0e86970, 373a228, caa8285
@@ -19,8 +19,8 @@ Auditoria do master prompt (itens verificáveis) — concluída em 25/10/2026; c
 ## Bloqueios
 - Chaves Adzuna (ADZUNA_APP_ID/KEY) não fornecidas → vagas BR (InfoJobs/Indeed/Rio) inativas — decisão pendente de: usuário
 - NEWS_API_KEY ausente → notícias em modo demo — decisão pendente de: usuário
-- Push/deploy do commit be62171 — aguardando autorização do usuário (Gate 6)
 
 ## Última validação
 - Testes executados em: 25/10/2026 — resultado: PASS (typecheck, lint, build)
 - Smoke local `next start`: /esportes 200 (tabs), /ferramentas 200 (IMC)
+- Smoke produção: /esportes 200 (abas), /ferramentas 200 (IMC), /api/vagas live n=20 (25/10/2026)
