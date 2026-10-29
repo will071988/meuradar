@@ -11,7 +11,7 @@ Sprint 9 (testes automatizados, quality gates e estabilidade) — **concluída**
 - [x] Quality gates — typecheck/lint/build PASS (última execução 26/10/2026)
 - [x] Auditoria itens 14, 15, 16, 18, 19, 25, 29 — PASS (evidência em TEST_REPORT.md)
 - [x] Item 17 (rotas com conteúdo) — PASS (be62171)
-- [x] **Item 28 (testes automatizados) — PASS (Sprint 9)**: Vitest + RTL + Playwright + CI GitHub Actions + `npm run quality`; 167 unit/integração + 31 E2E, coverage 77.94/67.12/82.95/82.47 (meta 70/60/70/70)
+- [x] **Item 28 (testes automatizados) — PASS (Sprint 9)**: Vitest + RTL + Playwright + CI GitHub Actions + `npm run quality`; 167 unit/integração + 31 E2E, coverage 77.94/67.12/82.95/82.47 (meta 70/60/70/70); CI run 40798039194 = PASS (Node 22)
 
 ## Em andamento
 - [ ] Itens 20–24, 26–27, 30–31 — não auditáveis sem o texto do master prompt (aguardando usuário)
@@ -23,7 +23,7 @@ Sprint 9 (testes automatizados, quality gates e estabilidade) — **concluída**
 ## Infra de testes (Sprint 9)
 - `vitest.config.mts` — jsdom, alias @, setup `src/test/setup.ts`, coverage v8 com thresholds 70/60/70/70
 - `playwright.config.ts` — projetos desktop e mobile (Pixel 5), webServer build+start
-- `.github/workflows/ci.yml` — Node 20, cache npm, npm ci, typecheck, lint, test, coverage, build, e2e (fail fast)
+- `.github/workflows/ci.yml` — Node 22 (zstd exigido por jsdom→undici; `engines >=22.15`), cache npm, npm ci, typecheck, lint, test, coverage, build, e2e (fail fast; run 40798039194 PASS)
 - `scripts/smoke-production.mjs` — smoke GET de produção (`npm run smoke:prod`)
 - Scripts: `test`, `test:watch`, `test:coverage`, `test:e2e`, `test:e2e:smoke`, `smoke:prod`, `quality`
 

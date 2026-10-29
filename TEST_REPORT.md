@@ -23,6 +23,7 @@ Data: 26/10/2026 | Sprint 9 (testes, qualidade e estabilidade) | Commit: pendent
 | E2E | `npm run test:e2e` | PASS — **31 testes** (26 desktop + 5 mobile) |
 | quality | `npm run quality` | PASS (typecheck && lint && test && build) |
 | smoke produção | `node scripts/smoke-production.mjs` | PASS — 6/6 rotas HTTP 200 |
+| CI GitHub Actions | run 40798039194 (4b9d8b0) | PASS — Quality gates + E2E em 2m56s (Node 22) |
 
 ### Cobertura (arquivos alvo: `src/lib/**`, `src/components/**`, `src/app/api/**`)
 
@@ -58,6 +59,7 @@ Data: 26/10/2026 | Sprint 9 (testes, qualidade e estabilidade) | Commit: pendent
 2. `totalSavings` somava o preço do mock (`priceAlertMock`) ao economia do usuário.
 3. `Button` sem `type="button"` default (submit implícito em formulários).
 4. **Conversor de moeda sempre exibia R$ 0,00**: `rates` indexado por id minúsculo (`usd`) contra `currency` maiúsculo (`USD`).
+5. **CI no Node 20 quebrava**: `jsdom@30 → undici@8` usa `zlib.createZstdDecompress` (só existe no Node ≥ 22) → fix `engines: node >=22.15` + CI em Node 22 (run 40798039194 = PASS).
 
 ## Auditoria anterior (Sprint 8) — Gates 4 e 5
 
