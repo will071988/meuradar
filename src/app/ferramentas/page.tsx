@@ -50,7 +50,8 @@ function CurrencyConverter() {
   const rates = useMemo(() => {
     const list = data && data.length > 0 ? data : marketMock;
     const out: Record<string, number> = {};
-    for (const item of list) out[item.id] = parseNumber(item.value) ?? 0;
+    // chaves em maiúsculas para casar com o estado `currency` ("USD" | "EUR" | "BTC")
+    for (const item of list) out[item.id.toUpperCase()] = parseNumber(item.value) ?? 0;
     return out;
   }, [data]);
 

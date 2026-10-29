@@ -9,7 +9,7 @@ import { sportsScheduleMock, standingsMock } from "@/data/mock";
 import { cn } from "@/lib/utils";
 import type { SportMatch } from "@/types";
 
-const tabs = ["Hoje", "Amanhã", "Classificação"] as const;
+const tabs = ["Hoje", "Amanhã", "Em alta"] as const;
 type Tab = (typeof tabs)[number];
 
 function initials(name: string): string {
@@ -67,6 +67,10 @@ export default function EsportesPage() {
     if (tab === "Amanhã") {
       return sportsScheduleMock.filter((m) => m.day === "amanha");
     }
+    if (tab === "Em alta") {
+      // destaques: jogos ao vivo primeiro, depois os demais
+      return [...sportsScheduleMock].sort((a, b) => Number(b.live ?? false) - Number(a.live ?? false));
+    }
     // "Hoje" inclui os jogos sem dia explícito (mock do dashboard).
     return sportsScheduleMock.filter((m) => m.day === undefined || m.day === "hoje");
   }, [tab]);
@@ -105,7 +109,18 @@ export default function EsportesPage() {
         ))}
       </div>
 
-      {tab === "Classificação" ? (
+      <ul className="space-y-3">
+        {matches.map((m) => (
+          <MatchRow key={m.id} m={m} />
+        ))}
+        {matches.length === 0 && (
+          <li className="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-500">
+            Nenhum jogo para esta aba.
+          </li>
+        )}
+      </ul>
+
+      {tab === "Em alta" && (
         <Card>
           <h2 className="flex items-center gap-2 text-base font-bold text-[#0B2D5B]">
             <Trophy className="h-5 w-5 text-[#FF8A3D]" aria-hidden="true" />
@@ -140,12 +155,6 @@ export default function EsportesPage() {
             </tbody>
           </table>
         </Card>
-      ) : (
-        <ul className="space-y-3">
-          {matches.map((m) => (
-            <MatchRow key={m.id} m={m} />
-          ))}
-        </ul>
       )}
 
       <Card className="border-dashed">

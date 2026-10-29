@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Fail fast: qualquer gate quebra o pipeline. Sem continue-on-error.
+jobs:
+  quality:
+    name: Quality gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Testes unitários e de integração
+        run: npm run test
+
+      - name: Cobertura
+        run: npm run test:coverage
+
+      - name: Build
+        run: npm run build
+
+  e2e:
+    name: E2E (Playwright)
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Instalar navegador Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Testes E2E
+        run: npm run test:e2e
+
+      - name: Relatório Playwright
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
