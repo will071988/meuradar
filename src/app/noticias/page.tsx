@@ -19,7 +19,7 @@ export default function NoticiasPage() {
             Notícias
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Manchetes do Brasil. Sem chave, exibimos seleção demo.
+            Manchetes do Brasil em tempo real, direto do G1 e ge.globo.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -72,8 +72,8 @@ export default function NoticiasPage() {
             <p className="text-xs text-slate-400">
               Atualizado em {new Date(updatedAt).toLocaleString("pt-BR")} •{" "}
               {source === "live"
-                ? "Fonte: NewsAPI"
-                : "Sem NEWS_API_KEY — defina no .env.local para ao vivo"}
+                ? "Fonte: G1 e ge.globo (RSS)"
+                : "Feeds indisponíveis — exibindo seleção local"}
             </p>
           )}
         </>

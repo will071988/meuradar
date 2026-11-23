@@ -67,6 +67,29 @@ export interface SportMatch {
   /** Dia do jogo (módulo /esportes, Sprint 8). */
   day?: "hoje" | "amanha";
   live?: boolean;
+  /** pre = a iniciar | live = em andamento | post = encerrado. */
+  status: "pre" | "live" | "post";
+  homeScore?: number;
+  awayScore?: number;
+  /** ISO do início e versão formatada em Brasília (ex.: "29/11, 16:00"). */
+  startsAt?: string;
+  startTime?: string;
+  leagueId?: string;
+}
+
+/** Tabela de uma competição, com um grupo por `children` da ESPN. */
+export interface LeagueStandings {
+  leagueId: string;
+  name: string;
+  groups: Array<{ name: string; entries: Standing[] }>;
+}
+
+/** Aggregate returned by GET /api/esportes. */
+export interface EsportsOverview {
+  live: SportMatch[];
+  upcoming: SportMatch[];
+  finished: SportMatch[];
+  standings: LeagueStandings[];
 }
 
 export interface Standing {
@@ -74,6 +97,57 @@ export interface Standing {
   team: string;
   pts: number;
   games: number;
+}
+
+/** Aggregated live sports data returned by GET /api/esportes. */
+export interface SportsData {
+  matches: SportMatch[];
+  standings: Standing[];
+}
+
+/* --- Rastreador tático (2D) --- */
+
+export interface TrackerPlayer {
+  id: string;
+  teamId: string;
+  homeAway: "home" | "away";
+  jersey: string;
+  name: string;
+  position: string;
+  formationPlace: number;
+}
+
+export interface TrackerEvent {
+  id: string;
+  type: string;
+  text: string;
+  minute: number;
+  period: number;
+  teamId: string;
+  /** Coordenadas percentuais no campo (0–100), quando a ESPN as fornece. */
+  x?: number;
+  y?: number;
+  x2?: number;
+  y2?: number;
+}
+
+export interface TrackerTeam {
+  id: string;
+  name: string;
+  abbreviation: string;
+  color: string;
+  score: number;
+  players: TrackerPlayer[];
+}
+
+export interface MatchTrackerData {
+  eventId: string;
+  home: TrackerTeam;
+  away: TrackerTeam;
+  /** in | post | pre */
+  status: string;
+  clock: string;
+  events: TrackerEvent[];
 }
 
 export interface CalendarEvent {

@@ -3,67 +3,63 @@ import type { ApiResponse, NewsItem } from "@/types";
 import { newsMock } from "@/data/mock";
 import { fetchWithTimeout, getCache, setCache } from "@/lib/cache";
 import { timeAgo } from "@/lib/format";
+import { parseRss } from "@/lib/rss";
 
 export const dynamic = "force-dynamic";
 
 const TTL_MS = 15 * 60 * 1000;
 const KEY = "noticias:v1";
 
-interface NewsApiArticle {
-  title?: string;
-  description?: string | null;
-  publishedAt?: string;
-  source?: { name?: string };
-}
+/** Feeds públicos — nenhuma chave de API necessária. */
+const FEEDS = [
+  { url: "https://g1.globo.com/rss/g1/", category: "G1", prefix: "g1", take: 4 },
+  { url: "https://ge.globo.com/rss/ge/", category: "Esportes", prefix: "ge", take: 2 },
+] as const;
 
-interface NewsApiResponse {
-  status?: string;
-  articles?: NewsApiArticle[];
+function demo(): NextResponse<ApiResponse<NewsItem[]>> {
+  return NextResponse.json({
+    source: "demo",
+    updatedAt: new Date().toISOString(),
+    data: newsMock,
+  });
 }
 
 export async function GET(): Promise<NextResponse<ApiResponse<NewsItem[]>>> {
   const cached = getCache<ApiResponse<NewsItem[]>>(KEY);
   if (cached) return NextResponse.json(cached);
 
-  const apiKey = process.env.NEWS_API_KEY?.trim();
-  if (!apiKey) {
-    return NextResponse.json({
-      source: "demo",
-      updatedAt: new Date().toISOString(),
-      data: newsMock,
+  const results = await Promise.allSettled(
+    FEEDS.map(async (feed) => {
+      const res = await fetchWithTimeout(feed.url, 9000, {
+        headers: { "User-Agent": "MeuRadar/1.0" },
+      });
+      if (!res.ok) throw new Error(`RSS ${res.status}`);
+      return { feed, items: parseRss(await res.text(), feed.take) };
+    })
+  );
+
+  const data: NewsItem[] = [];
+  for (const result of results) {
+    if (result.status !== "fulfilled") continue;
+    const { feed, items } = result.value;
+    items.forEach((item, index) => {
+      data.push({
+        id: `${feed.prefix}-${index}`,
+        category: feed.category,
+        title: item.title,
+        description: (item.description || "Leia a cobertura completa.").slice(0, 160),
+        time: item.publishedAt ? timeAgo(item.publishedAt) : "Agora",
+      });
     });
   }
 
-  try {
-    const res = await fetchWithTimeout(
-      `https://newsapi.org/v2/top-headlines?country=br&pageSize=8&apiKey=${encodeURIComponent(apiKey)}`
-    );
-    if (!res.ok) throw new Error("news");
-    const json = (await res.json()) as NewsApiResponse;
-    const articles = (json.articles ?? []).filter((a) => a.title && a.title !== "[Removed]");
+  if (data.length === 0) return demo();
 
-    if (articles.length === 0) throw new Error("empty");
-
-    const data: NewsItem[] = articles.slice(0, 6).map((a, i) => ({
-      id: `live-${i}`,
-      category: a.source?.name?.toUpperCase().slice(0, 24) || "BRASIL",
-      title: a.title as string,
-      description: (a.description || "Leia a cobertura completa.").slice(0, 160),
-      time: a.publishedAt ? timeAgo(a.publishedAt) : "Agora",
-    }));
-
-    const payload: ApiResponse<NewsItem[]> = {
-      source: "live",
-      updatedAt: new Date().toISOString(),
-      data,
-    };
-    setCache(KEY, payload, TTL_MS);
-    return NextResponse.json(payload);
-  } catch {
-    return NextResponse.json({
-      source: "demo",
-      updatedAt: new Date().toISOString(),
-      data: newsMock,
-    });
-  }
+  const payload: ApiResponse<NewsItem[]> = {
+    source: "live",
+    updatedAt: new Date().toISOString(),
+    data,
+  };
+  setCache(KEY, payload, TTL_MS);
+  return NextResponse.json(payload);
 }

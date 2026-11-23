@@ -104,19 +104,19 @@ export const newsMock: NewsItem[] = [
 ];
 
 export const sportsMock: SportMatch[] = [
-  { id: "m1", competition: "Libertadores", home: "Flamengo", away: "Bolívar", time: "21:30" },
-  { id: "m2", competition: "Copa do Brasil", home: "Palmeiras", away: "Botafogo", time: "20:00" },
-  { id: "m3", competition: "Brasileirão", home: "São Paulo", away: "Grêmio", time: "18:30" },
+  { id: "m1", competition: "Libertadores", home: "Flamengo", away: "Bolívar", time: "21:30", status: "pre" },
+  { id: "m2", competition: "Copa do Brasil", home: "Palmeiras", away: "Botafogo", time: "20:00", status: "pre" },
+  { id: "m3", competition: "Brasileirão", home: "São Paulo", away: "Grêmio", time: "18:30", status: "pre" },
 ];
 
 /** Agenda completa do módulo /esportes (Sprint 8). */
 export const sportsScheduleMock: SportMatch[] = [
   ...sportsMock,
-  { id: "m4", competition: "Libertadores", home: "Atlético-MG", away: "River Plate", time: "19:00", day: "hoje", live: true },
-  { id: "m5", competition: "Brasileirão", home: "Flamengo", away: "Cruzeiro", time: "16:00", day: "hoje" },
-  { id: "m6", competition: "Brasileirão", home: "Botafogo", away: "Bahia", time: "18:30", day: "amanha" },
-  { id: "m7", competition: "Copa do Brasil", home: "Grêmio", away: "Athletico-PR", time: "21:30", day: "amanha" },
-  { id: "m8", competition: "Libertadores", home: "São Paulo", away: "Peñarol", time: "21:30", day: "amanha" },
+  { id: "m4", competition: "Libertadores", home: "Atlético-MG", away: "River Plate", time: "19:00", day: "hoje", live: true, status: "live" },
+  { id: "m5", competition: "Brasileirão", home: "Flamengo", away: "Cruzeiro", time: "16:00", day: "hoje", status: "pre" },
+  { id: "m6", competition: "Brasileirão", home: "Botafogo", away: "Bahia", time: "18:30", day: "amanha", status: "pre" },
+  { id: "m7", competition: "Copa do Brasil", home: "Grêmio", away: "Athletico-PR", time: "21:30", day: "amanha", status: "pre" },
+  { id: "m8", competition: "Libertadores", home: "São Paulo", away: "Peñarol", time: "21:30", day: "amanha", status: "pre" },
 ];
 
 export const standingsMock: Standing[] = [

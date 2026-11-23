@@ -1,15 +1,22 @@
+"use client";
+
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { useApi } from "@/lib/useApi";
 import { marketMock } from "@/data/mock";
 import { cn } from "@/lib/utils";
+import type { MarketItem } from "@/types";
 
 export function MarketCard() {
+  const { data } = useApi<MarketItem[]>("/api/mercado");
+  const items = data ?? marketMock;
+
   return (
     <Card>
       <SectionHeader title="Mercado" />
       <ul className="space-y-3">
-        {marketMock.map((item) => {
+        {items.map((item) => {
           const up = item.trend === "up";
           return (
             <li

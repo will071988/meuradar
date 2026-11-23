@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { PriceTrackForm } from "@/components/prices/PriceTrackForm";
 import { PriceTrackCard } from "@/components/prices/PriceTrackCard";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useApi } from "@/lib/useApi";
 import {
   appendPrice,
   createTrack,
@@ -23,10 +24,11 @@ import {
   insertCloudTrack,
   updateCloudTrack,
 } from "@/lib/pricesCloud";
-import type { PriceTrack } from "@/types";
+import type { MarketItem, PriceTrack } from "@/types";
 
 export default function PrecosPage() {
   const { user, loading: authLoading } = useAuth();
+  const { data: quotes } = useApi<MarketItem[]>("/api/mercado");
   const [tracks, setTracks] = useState<PriceTrack[]>([]);
   const [cloudState, setCloudState] = useState<"off" | "syncing" | "on" | "error">("off");
   const syncedOnce = useRef(false);
@@ -182,6 +184,22 @@ export default function PrecosPage() {
           </p>
         </Card>
       </div>
+
+      <Card>
+        <h2 className="text-base font-bold text-[#0B2D5B]">Cotações ao vivo</h2>
+        <p className="mt-1 text-xs text-slate-500">
+          Dados reais de câmbio e cripto — AwesomeAPI e Frankfurter/CoinGecko.
+        </p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-4">
+          {(quotes ?? []).map((q) => (
+            <div key={q.id} className="rounded-xl bg-slate-50 px-3 py-2.5">
+              <p className="text-xs font-bold text-slate-500">{q.name}</p>
+              <p className="text-sm font-extrabold text-[#0B2D5B]">{q.value}</p>
+              <p className="text-xs font-semibold text-slate-500">{q.variation}</p>
+            </div>
+          ))}
+        </div>
+      </Card>
 
       <PriceTrackForm onCreate={handleCreate} />
 

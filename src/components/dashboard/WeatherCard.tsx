@@ -1,10 +1,17 @@
+"use client";
+
 import Link from "next/link";
 import { CloudSun, MapPin, TriangleAlert } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { useApi } from "@/lib/useApi";
 import { weatherMock } from "@/data/mock";
+import type { WeatherData } from "@/types";
 
 export function WeatherCard() {
-  const w = weatherMock;
+  const { data } = useApi<WeatherData>(
+    `/api/clima?city=${encodeURIComponent(weatherMock.city)}`
+  );
+  const w = data ?? weatherMock;
 
   return (
     <Card className="relative overflow-hidden bg-gradient-to-br from-[#0B2D5B] via-[#1450A0] to-[#00C2D7] !border-0 text-white">

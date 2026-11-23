@@ -1,6 +1,9 @@
+"use client";
+
 import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { sportsMock } from "@/data/mock";
+import { useApi } from "@/lib/useApi";
+import type { EsportsOverview } from "@/types";
 
 function initials(name: string): string {
   return name
@@ -12,6 +15,9 @@ function initials(name: string): string {
 }
 
 export function SportsCard() {
+  const { data } = useApi<EsportsOverview>("/api/esportes");
+  const matches = [...(data?.live ?? []), ...(data?.upcoming ?? [])].slice(0, 4);
+
   return (
     <Card>
       <SectionHeader title="Esportes" />
@@ -32,31 +38,38 @@ export function SportsCard() {
         ))}
       </div>
       <ul className="space-y-3">
-        {sportsMock.map((m) => (
+        {matches.map((m) => (
           <li key={m.id} className="rounded-xl bg-slate-50 px-3 py-3">
             <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
               {m.competition}
             </p>
             <div className="mt-2 flex items-center justify-between gap-2">
-              <span className="flex items-center gap-2 text-sm font-bold text-[#0B2D5B]">
+              <span className="flex min-w-0 items-center gap-2 text-sm font-bold text-[#0B2D5B]">
                 <span
                   aria-hidden="true"
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B2D5B] text-[11px] font-extrabold text-white"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0B2D5B] text-[11px] font-extrabold text-white"
                 >
                   {initials(m.home)}
                 </span>
-                {m.home}
+                <span className="truncate">{m.home}</span>
                 <span className="text-slate-300">x</span>
-                {m.away}
+                <span className="truncate">{m.away}</span>
                 <span
                   aria-hidden="true"
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-[#00C2D7] text-[11px] font-extrabold text-white"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#00C2D7] text-[11px] font-extrabold text-white"
                 >
                   {initials(m.away)}
                 </span>
               </span>
-              <span className="shrink-0 rounded-lg bg-white px-2 py-1 text-xs font-bold text-[#FF8A3D] ring-1 ring-inset ring-orange-100">
-                {m.time}
+              <span className="flex shrink-0 items-center gap-1.5">
+                {m.live && (
+                  <span className="rounded-md bg-red-50 px-1.5 py-0.5 text-[10px] font-extrabold text-red-600">
+                    AO VIVO
+                  </span>
+                )}
+                <span className="rounded-lg bg-white px-2 py-1 text-xs font-bold text-[#FF8A3D] ring-1 ring-inset ring-orange-100">
+                  {m.time}
+                </span>
               </span>
             </div>
           </li>

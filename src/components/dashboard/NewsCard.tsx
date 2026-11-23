@@ -1,14 +1,21 @@
+"use client";
+
 import { Newspaper } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { useApi } from "@/lib/useApi";
 import { newsMock } from "@/data/mock";
+import type { NewsItem } from "@/types";
 
 export function NewsCard() {
+  const { data } = useApi<NewsItem[]>("/api/noticias");
+  const news = data ?? newsMock;
+
   return (
     <Card>
       <SectionHeader title="Notícias para você" />
       <div className="space-y-4">
-        {newsMock.map((n) => (
+        {news.map((n) => (
           <article key={n.id} className="flex gap-3">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EAF2F8] text-[#0B2D5B]">
               <Newspaper className="h-5 w-5" aria-hidden="true" />

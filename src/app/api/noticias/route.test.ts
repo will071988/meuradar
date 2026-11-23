@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/cache", () => ({
   getCache: () => null,
@@ -7,41 +7,63 @@ vi.mock("@/lib/cache", () => ({
   fetchWithTimeout: (url: string) => globalThis.fetch(url),
 }));
 
-const NEWSAPI = "newsapi.org";
+const rss = (titles: string[]) => `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+${titles.map((t, i) => `<item>
+  <title>${t}</title>
+  <link>https://g1.globo.com/noticia-${i}.ghtml</link>
+  <description><![CDATA[<p>Descrição ${i}</p>]]></description>
+  <pubDate>Sun, 22 Nov 2026 19:0${i}:00 GMT</pubDate>
+</item>`).join("")}
+</channel></rss>`;
 
-const article = (title: string, extra: Record<string, unknown> = {}) => ({
-  title,
-  description: "Descrição.",
-  publishedAt: "2026-01-01T10:00:00Z",
-  source: { name: "G1" },
-  ...extra,
-});
-
-function stubFetch(res: Response) {
-  vi.stubGlobal(
-    "fetch",
-    vi.fn(async (input: RequestInfo | URL) => {
-      expect(String(input)).toContain(NEWSAPI);
-      return res.clone();
-    })
-  );
+function stubFetch(handler: (url: string) => Response | Promise<Response>) {
+  vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => handler(String(input))));
 }
-
-function json(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), { status });
-}
-
-beforeEach(() => {
-  delete process.env.NEWS_API_KEY;
-});
 
 afterEach(() => {
   vi.unstubAllGlobals();
-  delete process.env.NEWS_API_KEY;
 });
 
 describe("GET /api/noticias", () => {
-  it("sem chave → demo com curadoria local", async () => {
+  it("busca RSS público sem chave e normaliza as manchetes", async () => {
+    stubFetch((url) => new Response(rss(url.includes("ge.globo") ? ["Jogo decisivo"] : ["Manchete principal", "Outra notícia"]), { status: 200 }));
+
+    const { GET } = await import("@/app/api/noticias/route");
+    const res = await GET();
+    const body = (await res.json()) as {
+      source: string;
+      data: { id: string; category: string; title: string; description: string; time: string }[];
+    };
+
+    expect(res.status).toBe(200);
+    expect(body.source).toBe("live");
+    expect(body.data).toHaveLength(3);
+    expect(body.data[0]).toMatchObject({
+      id: "g1-0",
+      category: "G1",
+      title: "Manchete principal",
+      description: "Descrição 0",
+    });
+    expect(body.data[2]).toMatchObject({ id: "ge-0", category: "Esportes", title: "Jogo decisivo" });
+    expect(body.data[0]?.time).toMatch(/^Há \d+ (min|hora)/);
+  });
+
+  it("faz duas chamadas de rede (G1 e GE) sem nenhuma chave", async () => {
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL) => new Response(rss(["Título"]), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { GET } = await import("@/app/api/noticias/route");
+    await GET();
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain("g1.globo.com/rss/g1");
+    expect(String(fetchMock.mock.calls[1]?.[0])).toContain("ge.globo.com/rss/ge");
+  });
+
+  it("feed indisponível → demo, nunca exceção", async () => {
+    stubFetch(() => new Response("forbidden", { status: 403 }));
+
     const { GET } = await import("@/app/api/noticias/route");
     const res = await GET();
     const body = (await res.json()) as { source: string; data: unknown[] };
@@ -51,67 +73,11 @@ describe("GET /api/noticias", () => {
     expect(body.data.length).toBeGreaterThan(0);
   });
 
-  it("sem chave não faz nenhuma chamada de rede", async () => {
-    const fetchMock = vi.fn();
-    vi.stubGlobal("fetch", fetchMock);
-
-    const { GET } = await import("@/app/api/noticias/route");
-    await GET();
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
-
-  it("com chave → manchetes ao vivo normalizadas", async () => {
-    process.env.NEWS_API_KEY = "chave-de-teste";
-    stubFetch(
-      json({
-        status: "ok",
-        articles: [
-          article("Título principal"),
-          article("[Removed]"),
-          article("Segunda manchete", { description: null }),
-        ],
-      })
-    );
-
-    const { GET } = await import("@/app/api/noticias/route");
-    const body = (await (await GET()).json()) as {
-      source: string;
-      data: { id: string; category: string; title: string; description: string }[];
-    };
-
-    expect(body.source).toBe("live");
-    expect(body.data).toHaveLength(2); // "[Removed]" é filtrado
-    expect(body.data[0]?.category).toBe("G1");
-    expect(body.data[1]?.description).toBe("Leia a cobertura completa.");
-  });
-
-  it("erro upstream → demo, nunca exceção", async () => {
-    process.env.NEWS_API_KEY = "chave-de-teste";
-    stubFetch(new Response("rate limited", { status: 429 }));
-
-    const { GET } = await import("@/app/api/noticias/route");
-    const res = await GET();
-    const body = (await res.json()) as { source: string };
-
-    expect(res.status).toBe(200);
-    expect(body.source).toBe("demo");
-  });
-
-  it("resposta sem artigos → demo", async () => {
-    process.env.NEWS_API_KEY = "chave-de-teste";
-    stubFetch(json({ status: "ok", articles: [] }));
+  it("feed vazio → demo", async () => {
+    stubFetch(() => new Response("<rss><channel></channel></rss>", { status: 200 }));
 
     const { GET } = await import("@/app/api/noticias/route");
     const body = (await (await GET()).json()) as { source: string };
     expect(body.source).toBe("demo");
-  });
-
-  it("a chave nunca é exposta na resposta", async () => {
-    process.env.NEWS_API_KEY = "segredo-ultra-secreto-123";
-    stubFetch(json({ status: "ok", articles: [article("Ok")] }));
-
-    const { GET } = await import("@/app/api/noticias/route");
-    const text = JSON.stringify(await (await GET()).json());
-    expect(text).not.toContain("segredo-ultra-secreto-123");
   });
 });

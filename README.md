@@ -95,17 +95,18 @@ supabase/
 
 ## Módulos atuais (Sprint 1–8)
 
-- Painel Hoje (`/`) — saudação, Seu Radar de Hoje, clima, mercado, encomendas, preços, vagas, notícias, esportes, calendário (mock Sprint 1)
+- Painel Hoje (`/`) — saudação, Seu Radar de Hoje e cards alimentados pelas APIs reais (clima, mercado, notícias, esportes, vagas). Encomendas e calendário mostram apenas dados salvos pelo usuário neste navegador — sem conteúdo fictício.
 - Meu Radar (`/meu-radar`) — CRUD de radares + alertas avaliados ao vivo + sync nuvem (Sprint 4/5)
 - Pro (`/pro`) — planos Gratuito/Pro, linkado na Sidebar (Sprint 5)
 - Conta (`/conta`) — perfil + preferências + logout (Sprint 2)
 - Login (`/login`) / Cadastro (`/cadastro`) — Supabase ou demo local (Sprint 2)
 - Clima (`/clima`) — ao vivo Open-Meteo + fallback demo (Sprint 3)
 - Mercado (`/mercado`) — ao vivo AwesomeAPI + fallback demo (Sprint 3)
-- Notícias (`/noticias`) — NewsAPI quando há chave + fallback demo (Sprint 3)
+- Notícias (`/noticias`) — RSS público do G1 e ge.globo (sem chave), com notícias de esportes; fallback demo apenas se os feeds falharem
 - Vagas (`/vagas`) — ao vivo: Adzuna BR (com chaves, agrega InfoJobs/Indeed) + Arbeitnow + Remotive; busca por cargo/local, filtro remoto (Sprint 7+)
 - Preços (`/precos`) — radar de preços funcional: CRUD, histórico com sparkline, alerta no alvo, sync nuvem (Sprint 6)
-- Esportes (`/esportes`) — agenda com abas Hoje/Amanhã/Classificação, marcação AO VIVO e tabela do Brasileirão (Sprint 8)
+- Esportes (`/esportes`) — 15 campeonatos (Brasil, estaduais e internacionais) via ESPN sem chave, em quatro seções: Ao vivo, Próximos jogos (horário em Brasília), Resultados (status Encerrado + placar final) e Classificações (tabela por grupo). Filtro por campeonato.
+- Rastreador tático — botão "Campo" em cada partida: campo 2D com formação real dos 11 jogadores, bola animada nos lances com coordenadas, timeline clicável e polling de 10 s em jogos ao vivo (`/api/esportes/tracker?event=ID`). Rastreamento óptico EPTS (25 Hz) exige dados proprietários e não está disponível em API pública.
 - Ferramentas (`/ferramentas`) — 3 utilidades funcionais: conversor de moeda (usa `/api/mercado`), calculadora de desconto e IMC (Sprint 8)
 
 ## Roadmap resumido
@@ -127,7 +128,6 @@ supabase/
   - `NEXT_PUBLIC_SUPABASE_URL` = `https://uavzhegqnbqcyiuqedel.supabase.co`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = (chave anon do projeto, via `supabase projects api-keys`)
   - `NEXT_PUBLIC_APP_URL` = `https://meuradar.vercel.app`
-  - `NEWS_API_KEY` (opcional — sem ela, notícias usam demo)
 - Banco: projeto Supabase `uavzhegqnbqcyiuqedel` com `supabase/schema.sql` aplicado (profiles, preferences, radars + RLS + trigger) e Auth com `site_url` + redirects para o domínio prod e `localhost:3000`
 - Mercado: cadeia AwesomeAPI → Frankfurter + CoinGecko → mock (região `gru1`)
 
@@ -135,7 +135,9 @@ supabase/
 
 - Clima: sem chave. `GET /api/clima?city=Rio%20de%20Janeiro` → Open-Meteo (geocoding + forecast), cache 10 min, fallback `weatherMock`.
 - Mercado: sem chave. `GET /api/mercado` → AwesomeAPI USD/EUR/BTC-BRL, cache 5 min, Ibovespa segue demo, fallback `marketMock`.
-- Notícias: opcional. Sem `NEWS_API_KEY`, `GET /api/noticias` retorna `newsMock` (demo). Com chave da NewsAPI, retorna manchetes BR, cache 15 min.
+- Notícias: sem chave. `GET /api/noticias` lê os feeds RSS do G1 e ge.globo (manchetes gerais + esportes), cache 15 min. Fallback `newsMock` apenas se os feeds estiverem indisponíveis.
+- Esportes: sem chave. `GET /api/esportes` agrega scoreboard (mês atual + próximo) e classificações de 15 ligas: Séries A/B/C, Copa do Brasil, Supercopa Rei, Paulista/Carioca/Gaúcho/Mineiro, Libertadores, Sul-Americana, Recopa, Champions, Europa League e Copa do Mundo. Horários convertidos para `America/Sao_Paulo`. Cache 5 min.
+- Rastreador: sem chave. `GET /api/esportes/tracker?event=ID` lê o `summary` da ESPN e normaliza escalação (`formationPlace`) + lances com `fieldPositionX/Y`. Cache 10 s em jogo ao vivo, 5 min após o apito final.
 - Vagas: sem chave (`GET /api/vagas`) → Arbeitnow + Remotive (deduplicadas), cache 30 min. Com `ADZUNA_APP_ID` + `ADZUNA_APP_KEY` (grátis em developer.adzuna.com), `GET /api/vagas?q=&where=Rio de Janeiro` retorna vagas BR (agrega InfoJobs/Indeed). Scraping direto desses sites é bloqueado por anti-bot — usar o agregador.
 - Badge “Ao vivo/Demo” + botão Atualizar + timestamp em cada página.
 

@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { SourceBadge } from "@/components/data/SourceBadge";
 import { useApi } from "@/lib/useApi";
-import { jobsMock } from "@/data/mock";
 import type { RemoteJob } from "@/types";
 
 export default function VagasPage() {
@@ -168,27 +167,11 @@ export default function VagasPage() {
       )}
 
       <Card>
-        <h2 className="text-base font-bold text-[#0B2D5B]">Concursos em destaque</h2>
-        <p className="text-xs text-slate-400">Curadoria demo — API de concursos em breve.</p>
-        <ul className="mt-3 space-y-2">
-          {jobsMock
-            .filter((j) => /concurso/i.test(j.title))
-            .map((j) => (
-              <li
-                key={j.id}
-                className="flex items-center justify-between gap-2 rounded-xl bg-slate-50 px-3 py-2.5"
-              >
-                <div>
-                  <p className="text-sm font-bold text-[#0B2D5B]">{j.title}</p>
-                  <p className="text-xs text-slate-500">
-                    {j.detail}
-                    {j.extra ? ` • ${j.extra}` : ""}
-                  </p>
-                </div>
-                <Badge tone={j.badgeTone}>{j.badge}</Badge>
-              </li>
-            ))}
-        </ul>
+        <h2 className="text-base font-bold text-[#0B2D5B]">Fontes das vagas</h2>
+        <p className="mt-1 text-xs text-slate-500">
+          Vagas BR via Adzuna (quando configurado) e vagas remotas globais ao vivo via Arbeitnow e
+          Remotive. Use a busca acima para consultar estas fontes em tempo real.
+        </p>
       </Card>
     </div>
   );

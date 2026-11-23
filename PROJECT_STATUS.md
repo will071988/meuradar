@@ -1,5 +1,14 @@
 # Status do Projeto
-Atualizado: 26/10/2026 (Sprint 9 concluída; `git log` = 7cd4690 + commit Sprint 9)
+Atualizado: 22/11/2026 (Sprint 9 concluída + migração dos mocks para fontes reais sem chave)
+
+## Migração para dados reais (22/11/2026)
+- Notícias (`/api/noticias`): feeds RSS públicos do G1 e ge.globo — sem chave; fallback demo apenas em falha.
+- Esportes (`/api/esportes`): 15 campeonatos via ESPN sem chave (Brasil, 4 estaduais e internacionais), com jogos ao vivo, próximos (horário de Brasília), resultados (Encerrado + placar) e classificações por grupo. Cache 5 min; fallback de temporada para ligas com tabela antiga.
+- Rastreador tático (`/api/esportes/tracker?event=ID` + `MatchTracker`): campo 2D com formação real (11 jogadores por time) e bola animada nos lances coordenados da ESPN; polling de 10 s em partidas ao vivo. Limitação: EPTS óptico 25 Hz é dado proprietário e não existe em API pública — o tracker usa dados reais de formação/coordenadas da ESPN.
+- Clima, Mercado e Vagas: já usavam provedores reais sem chave (Open-Meteo, AwesomeAPI/Frankfurter/CoinGecko, Arbeitnow/Remotive).
+- Dashboard: todos os cards passaram a consumir as APIs reais; encomendas e calendário mostram somente dados salvos no navegador (sem mocks).
+- `NEWS_API_KEY` deixou de ser necessária. Autenticação permanece local/supabase conforme configuração.
+
 
 ## Fase atual
 Sprint 9 (testes automatizados, quality gates e estabilidade) — **concluída**; item 28 da auditoria fechado.

@@ -5,16 +5,20 @@ import { Monitor } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Badge } from "@/components/ui/Badge";
-import { priceAlertMock } from "@/data/mock";
+import { useApi } from "@/lib/useApi";
 import { discountPct, formatBRLTrack, loadTracks, tracksOnTarget } from "@/lib/prices";
+import type { MarketItem } from "@/types";
+
+interface Highlight {
+  product: string;
+  current: string;
+  old?: string;
+  discount?: string;
+}
 
 export function PriceAlertCard() {
-  const [best, setBest] = useState<{
-    product: string;
-    current: string;
-    old: string;
-    discount: string;
-  } | null>(null);
+  const [best, setBest] = useState<Highlight | null>(null);
+  const { data: market } = useApi<MarketItem[]>("/api/mercado");
 
   useEffect(() => {
     const hits = tracksOnTarget(loadTracks());
@@ -30,11 +34,12 @@ export function PriceAlertCard() {
     });
   }, []);
 
-  const p = best ?? {
-    product: priceAlertMock.product,
-    current: priceAlertMock.currentPrice,
-    old: priceAlertMock.oldPrice,
-    discount: priceAlertMock.discount,
+  const quote = market?.[0];
+  const p: Highlight = best ?? {
+    product: quote ? `${quote.name} · cotação ao vivo` : "Carregando cotação...",
+    current: quote?.value ?? "—",
+    old: undefined,
+    discount: quote?.variation,
   };
 
   return (
@@ -50,10 +55,12 @@ export function PriceAlertCard() {
         <div className="min-w-0">
           <p className="truncate text-sm font-bold text-[#0B2D5B]">{p.product}</p>
           <p className="mt-1 text-lg font-extrabold text-[#0B2D5B]">{p.current}</p>
-          <p className="text-xs text-slate-400 line-through">{p.old}</p>
-          <Badge tone="hot" className="mt-2">
-            {p.discount}
-          </Badge>
+          {p.old && <p className="text-xs text-slate-400 line-through">{p.old}</p>}
+          {p.discount && (
+            <Badge tone="hot" className="mt-2">
+              {p.discount}
+            </Badge>
+          )}
         </div>
       </div>
     </Card>

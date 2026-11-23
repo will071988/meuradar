@@ -31,3 +31,7 @@ pnpm-debug.log*
 coverage/
 playwright-report/
 test-results/
+
+# Validation artifacts (local)
+.*.log
+.e2e-debug*.txt
