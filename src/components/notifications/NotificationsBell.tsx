@@ -6,6 +6,12 @@ import { Bell } from "lucide-react";
 import type { ApiResponse, MarketItem, RadarAlert, WeatherData } from "@/types";
 import { evaluateRadars, loadRadars } from "@/lib/radars";
 import { loadPreferences } from "@/lib/preferences";
+import {
+  notificationsSupported,
+  permission as notificationPermission,
+  requestPermission,
+  notifyNewAlerts,
+} from "@/lib/notifications";
 
 const READ_KEY = "meuradar-read-v1";
 
@@ -23,6 +29,7 @@ export function NotificationsBell() {
   const [alerts, setAlerts] = useState<RadarAlert[]>([]);
   const [open, setOpen] = useState(false);
   const [dismissed, setDismissed] = useState<string[]>([]);
+  const [notificationState, setNotificationState] = useState<NotificationPermission | "unsupported">("default");
 
   const refresh = useCallback(() => {
     const radars = loadRadars().filter((r) => r.active);
@@ -40,14 +47,15 @@ export function NotificationsBell() {
         .then((r) => (r.ok ? (r.json() as Promise<ApiResponse<MarketItem[]>>) : null))
         .catch(() => null),
     ]).then(([w, m]) => {
-      setAlerts(
-        evaluateRadars(radars, { weather: w?.data ?? null, market: m?.data ?? null })
-      );
+      const next = evaluateRadars(radars, { weather: w?.data ?? null, market: m?.data ?? null });
+      setAlerts(next);
+      notifyNewAlerts(next);
     });
   }, []);
 
   useEffect(() => {
     setDismissed(readDismissed());
+    setNotificationState(notificationPermission());
     refresh();
     const timer = setInterval(refresh, 5 * 60 * 1000);
     return () => clearInterval(timer);
@@ -101,6 +109,15 @@ export function NotificationsBell() {
                 </button>
               )}
             </div>
+            {notificationsSupported() && notificationState !== "granted" && (
+              <button
+                type="button"
+                onClick={async () => setNotificationState(await requestPermission())}
+                className="mt-2 w-full rounded-xl bg-[#EAF2F8] px-3 py-2 text-xs font-bold text-[#0B2D5B] hover:bg-[#d8e8f5]"
+              >
+                Ativar notificações no navegador
+              </button>
+            )}
             {visible.length === 0 ? (
               <p className="mt-2 text-sm text-slate-500">
                 Nenhum alerta agora. Crie radares em{" "}

@@ -103,7 +103,9 @@ supabase/
 - Clima (`/clima`) — ao vivo Open-Meteo + fallback demo (Sprint 3)
 - Mercado (`/mercado`) — ao vivo AwesomeAPI + fallback demo (Sprint 3)
 - Notícias (`/noticias`) — RSS público do G1 e ge.globo (sem chave), com notícias de esportes; fallback demo apenas se os feeds falharem
-- Vagas (`/vagas`) — ao vivo: Adzuna BR (com chaves, agrega InfoJobs/Indeed) + Arbeitnow + Remotive; busca por cargo/local, filtro remoto (Sprint 7+)
+- Vagas (`/vagas`) — ao vivo: Adzuna BR (com chaves, agrega InfoJobs/Indeed) + Arbeitnow + Remotive; busca por cargo/local, filtro remoto (Sprint 7+). Concursos reais via RSS G1/Trabalho (Sprint 10)
+- Insights no dashboard — recomendações determinísticas a partir de clima, mercado, classificação e concursos reais, sem modelo externo (Sprint 13)
+- Notificações — alertas dos radares com permissão nativa do navegador e deduplicação (Sprint 11)
 - Preços (`/precos`) — radar de preços funcional: CRUD, histórico com sparkline, alerta no alvo, sync nuvem (Sprint 6)
 - Esportes (`/esportes`) — 15 campeonatos (Brasil, estaduais e internacionais) via ESPN sem chave, em quatro seções: Ao vivo, Próximos jogos (horário em Brasília), Resultados (status Encerrado + placar final) e Classificações (tabela por grupo). Filtro por campeonato.
 - Rastreador tático — botão "Campo" em cada partida: campo 2D com formação real dos 11 jogadores, bola animada nos lances com coordenadas, timeline clicável e polling de 10 s em jogos ao vivo (`/api/esportes/tracker?event=ID`). Rastreamento óptico EPTS (25 Hz) exige dados proprietários e não está disponível em API pública.
@@ -137,6 +139,7 @@ supabase/
 - Mercado: sem chave. `GET /api/mercado` → AwesomeAPI USD/EUR/BTC-BRL, cache 5 min, Ibovespa segue demo, fallback `marketMock`.
 - Notícias: sem chave. `GET /api/noticias` lê os feeds RSS do G1 e ge.globo (manchetes gerais + esportes), cache 15 min. Fallback `newsMock` apenas se os feeds estiverem indisponíveis.
 - Esportes: sem chave. `GET /api/esportes` agrega scoreboard (mês atual + próximo) e classificações de 15 ligas: Séries A/B/C, Copa do Brasil, Supercopa Rei, Paulista/Carioca/Gaúcho/Mineiro, Libertadores, Sul-Americana, Recopa, Champions, Europa League e Copa do Mundo. Horários convertidos para `America/Sao_Paulo`. Cache 5 min.
+- Concursos: sem chave. `GET /api/concursos` lê o RSS de Trabalho do G1 (o feed /concursos/ está congelado em 2018), filtra concursos/processos seletivos/resultados e devolve até 8 itens. Cache 15 min.
 - Rastreador: sem chave. `GET /api/esportes/tracker?event=ID` lê o `summary` da ESPN e normaliza escalação (`formationPlace`) + lances com `fieldPositionX/Y`. Cache 10 s em jogo ao vivo, 5 min após o apito final.
 - Vagas: sem chave (`GET /api/vagas`) → Arbeitnow + Remotive (deduplicadas), cache 30 min. Com `ADZUNA_APP_ID` + `ADZUNA_APP_KEY` (grátis em developer.adzuna.com), `GET /api/vagas?q=&where=Rio de Janeiro` retorna vagas BR (agrega InfoJobs/Indeed). Scraping direto desses sites é bloqueado por anti-bot — usar o agregador.
 - Badge “Ao vivo/Demo” + botão Atualizar + timestamp em cada página.

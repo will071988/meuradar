@@ -50,6 +50,15 @@ export interface JobItem {
   badgeTone: "new" | "hot";
 }
 
+/** Concurso público divulgado pelo RSS de Concursos do G1. */
+export interface ConcursoItem {
+  id: string;
+  title: string;
+  description: string;
+  time: string;
+  category: "Concurso" | "Processo seletivo" | "Resultado";
+}
+
 export interface NewsItem {
   id: string;
   category: string;

@@ -8,11 +8,12 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { SourceBadge } from "@/components/data/SourceBadge";
 import { useApi } from "@/lib/useApi";
-import type { RemoteJob } from "@/types";
+import type { ConcursoItem, RemoteJob } from "@/types";
 
 export default function VagasPage() {
   const [apiUrl, setApiUrl] = useState("/api/vagas");
   const { data, source, updatedAt, loading, error, refresh } = useApi<RemoteJob[]>(apiUrl);
+  const { data: concursos } = useApi<ConcursoItem[]>("/api/concursos");
   const [query, setQuery] = useState("");
   const [where, setWhere] = useState("Rio de Janeiro");
   const [remoteOnly, setRemoteOnly] = useState(false);
@@ -167,11 +168,28 @@ export default function VagasPage() {
       )}
 
       <Card>
-        <h2 className="text-base font-bold text-[#0B2D5B]">Fontes das vagas</h2>
+        <h2 className="text-base font-bold text-[#0B2D5B]">Concursos em destaque</h2>
         <p className="mt-1 text-xs text-slate-500">
-          Vagas BR via Adzuna (quando configurado) e vagas remotas globais ao vivo via Arbeitnow e
-          Remotive. Use a busca acima para consultar estas fontes em tempo real.
+          Concursos e processos seletivos divulgados pelo G1 — fonte pública, sem chave de API.
         </p>
+        {!concursos || concursos.length === 0 ? (
+          <p className="mt-3 text-sm text-slate-500">Carregando concursos...</p>
+        ) : (
+          <ul className="mt-3 space-y-2">
+            {concursos.map((item) => (
+              <li key={item.id} className="rounded-xl bg-slate-50 px-3 py-2.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge tone={item.category === "Resultado" ? "hot" : "new"}>
+                    {item.category}
+                  </Badge>
+                  <span className="text-[11px] font-semibold text-slate-400">{item.time}</span>
+                </div>
+                <p className="mt-1 text-sm font-bold leading-snug text-[#0B2D5B]">{item.title}</p>
+                <p className="mt-0.5 line-clamp-2 text-xs text-slate-500">{item.description}</p>
+              </li>
+            ))}
+          </ul>
+        )}
       </Card>
     </div>
   );

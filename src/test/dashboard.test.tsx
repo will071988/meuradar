@@ -42,6 +42,7 @@ beforeAll(() => {
       else if (url.includes("/api/noticias")) data = newsMock;
       else if (url.includes("/api/esportes")) data = sports;
       else if (url.includes("/api/vagas")) data = jobs;
+      else if (url.includes("/api/concursos")) data = [];
       return new Response(JSON.stringify(apiResponse(data)), {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -91,6 +92,7 @@ describe("Dashboard (painel Hoje)", () => {
     expect(screen.getByRole("heading", { name: "Esportes" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Alerta de Preços" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Rastreio de Encomendas" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Insights para você" })).toBeInTheDocument();
   });
 
   it("exibe abas de esportes Hoje / Amanhã / Em alta", () => {

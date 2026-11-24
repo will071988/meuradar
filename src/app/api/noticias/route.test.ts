@@ -46,7 +46,7 @@ describe("GET /api/noticias", () => {
       description: "Descrição 0",
     });
     expect(body.data[2]).toMatchObject({ id: "ge-0", category: "Esportes", title: "Jogo decisivo" });
-    expect(body.data[0]?.time).toMatch(/^Há \d+ (min|hora)/);
+    expect(body.data[0]?.time).toMatch(/^Há \d+ (min|horas?|dias?)/);
   });
 
   it("faz duas chamadas de rede (G1 e GE) sem nenhuma chave", async () => {

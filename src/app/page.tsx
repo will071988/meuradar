@@ -1,5 +1,6 @@
 import { CalendarCard } from "@/components/dashboard/CalendarCard";
 import { Greeting } from "@/components/dashboard/Greeting";
+import { InsightsCard } from "@/components/dashboard/InsightsCard";
 import { JobsCard } from "@/components/dashboard/JobsCard";
 import { MarketCard } from "@/components/dashboard/MarketCard";
 import { NewsCard } from "@/components/dashboard/NewsCard";
@@ -15,6 +16,8 @@ export default function HomePage() {
       <Greeting />
 
       <RadarToday />
+
+      <InsightsCard />
 
       <div className="grid gap-5 lg:grid-cols-3">
         <div className="lg:col-span-2">

@@ -11,7 +11,13 @@ Atualizado: 22/11/2026 (Sprint 9 concluída + migração dos mocks para fontes r
 
 
 ## Fase atual
-Sprint 9 (testes automatizados, quality gates e estabilidade) — **concluída**; item 28 da auditoria fechado.
+Sprints 1–13 — **concluídas no escopo sem credenciais externas**. Item 28 (testes) fechado na Sprint 9; itens 3 e 5 fechados na Sprint 10; item 7 (parte cliente) na Sprint 11; item 9 na Sprint 12; item 8 (parte local) na Sprint 13.
+
+## Sprints 10–13 (23/11/2026)
+- Sprint 10 — concursos reais via RSS G1/Trabalho (`/api/concursos`) integrados em `/vagas`; fim da curadoria demo.
+- Sprint 11 — notificações nativas do navegador para novos alertas dos radares, com permissão explícita e deduplicação por ID.
+- Sprint 12 — AuthProvider com Supabase mockado: sessão inicial, metadata, auth state change, signIn/signUp/signOut/updateName, fallback sem cliente.
+- Sprint 13 — insights determinísticos no dashboard a partir de clima, mercado, classificação e concursos reais (sem modelo externo).
 
 ## Concluído com evidência
 - [x] Sprints 1–7 (fundação, auth, APIs ao vivo, radares/alertas, sync nuvem/PWA/Pro, preços, vagas) — commits d75ce97, 39cc84c, 3090c74, 9eb2a0a, ed60226, 0e86970, 373a228, caa8285
@@ -27,7 +33,9 @@ Sprint 9 (testes automatizados, quality gates e estabilidade) — **concluída**
 
 ## Bloqueios
 - Chaves Adzuna (ADZUNA_APP_ID/KEY) não fornecidas → vagas BR (InfoJobs/Indeed/Rio) inativas — decisão pendente de: usuário
-- NEWS_API_KEY ausente → notícias em modo demo — decisão pendente de: usuário
+- Itens 20–24, 26–27, 30–31 → dependem do texto do master prompt — decisão pendente de: usuário
+- Cron server-side push/WhatsApp e IA generativa/cobrança Pro → dependem de credenciais (Supabase, WhatsApp, LLM, gateway de pagamento) — decisão pendente de: usuário
+- (Resolvido) NEWS_API_KEY → substituída por RSS público na Sprint 10.
 
 ## Infra de testes (Sprint 9)
 - `vitest.config.mts` — jsdom, alias @, setup `src/test/setup.ts`, coverage v8 com thresholds 70/60/70/70
